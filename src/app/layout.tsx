@@ -5,16 +5,28 @@ import theme from "@/theme";
 import Navbar from "@/components/appbar/Navbar";
 import { NextAuthProvider } from "./provider";
 import { CssBaseline } from "@mui/material";
+import { getServerSession } from "next-auth/next";
+import { authOptions } from "./api/auth/[...nextauth]/route";
+import { PrismaClient } from "@prisma/client";
+
+const prisma = new PrismaClient();
 
 export const metadata: Metadata = {
   title: "Repeater",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const session = await getServerSession(authOptions);
+  const collections = session
+    ? await prisma.termCollection.findMany({
+        where: { ownerId: session?.user.id },
+      })
+    : undefined;
+
   return (
     <html lang="en">
       <body>
@@ -22,7 +34,7 @@ export default function RootLayout({
           <AppRouterCacheProvider>
             <ThemeProvider theme={theme}>
               <CssBaseline>
-                <Navbar />
+                <Navbar collections={collections} userId={session?.user.id} />
                 {children}
               </CssBaseline>
             </ThemeProvider>

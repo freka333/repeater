@@ -1,11 +1,10 @@
 import { PrismaClient, TermMark } from "@prisma/client";
 import { getServerSession } from "next-auth/next";
-import { authOptions } from "../../api/auth/[...nextauth]/route";
 import { revalidatePath } from "next/cache";
-import { paths } from "@/paths";
 import { NotFound } from "@/components/pageComponents/NotFound";
 import { IrregularVerbList } from "@/components/collection/IrregularVerbList";
 import { IrregularVerbWithUserInfo } from "@/types/collectionTypes";
+import { authOptions } from "../api/auth/[...nextauth]/route";
 
 const prisma = new PrismaClient();
 
@@ -21,7 +20,7 @@ async function handleMarkVerb(verbId: string, userId: string, mark: TermMark) {
     update: { mark: mark },
     create: { irregularVerbId: verbId, ownerId: userId, mark: mark },
   });
-  revalidatePath(paths.irregularVerbs.path);
+  revalidatePath("/");
 }
 
 async function handleRemoveMarkVerb(verbId: string, userId: string) {
@@ -34,7 +33,7 @@ async function handleRemoveMarkVerb(verbId: string, userId: string) {
       },
     },
   });
-  revalidatePath(paths.irregularVerbs.path);
+  revalidatePath("/");
 }
 
 export default async function IrregularVerbs() {
