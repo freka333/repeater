@@ -1,31 +1,24 @@
 "use client";
 
-import { TermMark } from "@prisma/client";
 import { IrregularVerbWithUserInfo } from "@/types/collectionTypes";
 import { FC, useState } from "react";
 import { useMediaQuery } from "@mui/material";
 import theme from "@/theme";
-import { TermFilter } from "./TermFilter";
 import { paths } from "@/paths";
 import { MobileCollection } from "./MobileCollection";
 import { TableCollection } from "./TableCollection";
+import { TermFilter } from "./TermFilter";
+import { BasicHeaderForTerms } from "./BasicHeaderForTerms";
+import { handleMarkVerb, handleRemoveMarkVerb } from "@/app/actions";
 
 interface IrregularVerbListProps {
   verbs: IrregularVerbWithUserInfo[];
   userId: string;
-  handleMarkVerb: (
-    verbId: string,
-    userId: string,
-    mark: TermMark
-  ) => Promise<void>;
-  handleRemoveMarkVerb: (verbId: string, userId: string) => Promise<void>;
 }
 
 export const IrregularVerbList: FC<IrregularVerbListProps> = ({
   verbs,
   userId,
-  handleMarkVerb,
-  handleRemoveMarkVerb,
 }) => {
   const [checkedItems, setCheckedItems] = useState({
     Unmarked: true,
@@ -43,13 +36,18 @@ export const IrregularVerbList: FC<IrregularVerbListProps> = ({
       )
   );
 
-  const filter = (
-    <TermFilter
+  const header = (
+    <BasicHeaderForTerms
       title={paths.irregularVerbs.name}
-      checkedItems={checkedItems}
-      searchValue={searchValue}
-      setCheckedItems={setCheckedItems}
-      setSearchValue={setSearchValue}
+      filter={
+        <TermFilter
+          checkedItems={checkedItems}
+          searchValue={searchValue}
+          setCheckedItems={setCheckedItems}
+          setSearchValue={setSearchValue}
+          isMobile={isMobile}
+        />
+      }
     />
   );
   if (isMobile) {
@@ -57,7 +55,7 @@ export const IrregularVerbList: FC<IrregularVerbListProps> = ({
       <MobileCollection
         terms={filteredVerbs}
         userId={userId}
-        filter={filter}
+        header={header}
         handleMarkTerm={handleMarkVerb}
         handleRemoveMarkTerm={handleRemoveMarkVerb}
       />
@@ -67,7 +65,7 @@ export const IrregularVerbList: FC<IrregularVerbListProps> = ({
     <TableCollection
       terms={filteredVerbs}
       userId={userId}
-      filter={filter}
+      header={header}
       handleMarkTerm={handleMarkVerb}
       handleRemoveMarkTerm={handleRemoveMarkVerb}
     />

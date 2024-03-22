@@ -1,4 +1,5 @@
 import {
+  Box,
   Paper,
   Table,
   TableBody,
@@ -19,21 +20,21 @@ import {
 interface TableCollectionProps {
   terms: TermWithUserInfo[] | IrregularVerbWithUserInfo[];
   userId: string;
-  filter: ReactNode;
   handleMarkTerm: (
     termId: string,
     userId: string,
     mark: TermMark
   ) => Promise<void>;
   handleRemoveMarkTerm: (termId: string, userId: string) => Promise<void>;
+  header: ReactNode;
 }
 
 export const TableCollection: FC<TableCollectionProps> = ({
   terms,
   userId,
-  filter,
   handleMarkTerm,
   handleRemoveMarkTerm,
+  header,
 }) => {
   return (
     <Paper
@@ -43,9 +44,12 @@ export const TableCollection: FC<TableCollectionProps> = ({
         mx: "auto",
       }}
     >
-      {filter}
+      {header}
       {terms.length === 0 ? (
-        <Typography>No items</Typography>
+        <Box sx={{ p: "2rem" }}>
+          <Typography>No terms</Typography>
+          {}{" "}
+        </Box>
       ) : (
         <TableContainer>
           <Table stickyHeader sx={{ borderCollapse: "collapse" }}>

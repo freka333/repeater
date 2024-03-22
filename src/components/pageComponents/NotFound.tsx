@@ -1,9 +1,10 @@
-import { Paper, Typography } from "@mui/material";
+import { Typography } from "@mui/material";
+import { PagePaper } from "./PagePaper";
 
 export const NotFound = () => {
   return (
-    <Paper>
+    <PagePaper>
       <Typography>Something wrong</Typography>
-    </Paper>
+    </PagePaper>
   );
 };

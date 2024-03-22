@@ -7,9 +7,7 @@ import { NextAuthProvider } from "./provider";
 import { CssBaseline } from "@mui/material";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "./api/auth/[...nextauth]/route";
-import { PrismaClient } from "@prisma/client";
-
-const prisma = new PrismaClient();
+import { prisma } from "./prismaClient";
 
 export const metadata: Metadata = {
   title: "Repeater",

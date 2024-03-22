@@ -1,32 +1,31 @@
 "use client";
 
-import { TermFilter } from "./TermFilter";
+import { TermCollectionHeader } from "./TermCollectionHeader";
 import { FC, useState } from "react";
 import { useMediaQuery } from "@mui/material";
 import theme from "@/theme";
-import { TermMark } from "@prisma/client";
 import { TermWithUserInfo } from "@/types/collectionTypes";
 import { TableCollection } from "./TableCollection";
 import { MobileCollection } from "./MobileCollection";
+import { TermFilter } from "./TermFilter";
+import { BasicHeaderForTerms } from "./BasicHeaderForTerms";
+import {
+  handleMarkTerm,
+  handleRemoveMarkTerm,
+} from "@/app/collections/handleMark";
 
 interface TermListProps {
   title: string;
-  terms: TermWithUserInfo[];
   userId: string;
-  handleMarkTerm: (
-    termId: string,
-    userId: string,
-    mark: TermMark
-  ) => Promise<void>;
-  handleRemoveMarkTerm: (termId: string, userId: string) => Promise<void>;
+  terms: TermWithUserInfo[];
+  collectionId: string | null;
 }
 
 export const TermList: FC<TermListProps> = ({
   title,
-  terms,
   userId,
-  handleMarkTerm,
-  handleRemoveMarkTerm,
+  terms,
+  collectionId,
 }) => {
   const [checkedItems, setCheckedItems] = useState({
     Unmarked: true,
@@ -46,20 +45,31 @@ export const TermList: FC<TermListProps> = ({
 
   const filter = (
     <TermFilter
-      title={title}
       checkedItems={checkedItems}
       searchValue={searchValue}
       setCheckedItems={setCheckedItems}
       setSearchValue={setSearchValue}
+      isMobile={isMobile}
     />
+  );
+
+  const header = collectionId ? (
+    <TermCollectionHeader
+      title={title}
+      userId={userId}
+      filter={filter}
+      collectionId={collectionId}
+    />
+  ) : (
+    <BasicHeaderForTerms title={title} filter={filter} />
   );
 
   if (isMobile) {
     return (
       <MobileCollection
-        terms={filteredTerms}
         userId={userId}
-        filter={filter}
+        header={header}
+        terms={filteredTerms}
         handleMarkTerm={handleMarkTerm}
         handleRemoveMarkTerm={handleRemoveMarkTerm}
       />
@@ -67,9 +77,9 @@ export const TermList: FC<TermListProps> = ({
   }
   return (
     <TableCollection
-      terms={filteredTerms}
       userId={userId}
-      filter={filter}
+      header={header}
+      terms={filteredTerms}
       handleMarkTerm={handleMarkTerm}
       handleRemoveMarkTerm={handleRemoveMarkTerm}
     />

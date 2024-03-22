@@ -1,12 +1,10 @@
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import { TermList } from "@/components/collection/TermList";
 import { NotFound } from "@/components/pageComponents/NotFound";
-import { PrismaClient } from "@prisma/client";
 import { getServerSession } from "next-auth/next";
-import { handleMarkTerm, handleRemoveMarkTerm } from "../handleMark";
 import { TermWithUserInfo } from "@/types/collectionTypes";
-
-const prisma = new PrismaClient();
+import { ObjectId } from "mongodb";
+import { prisma } from "@/app/prismaClient";
 
 export default async function Collection({
   params,
@@ -14,11 +12,12 @@ export default async function Collection({
   params: { id: string };
 }) {
   const session = await getServerSession(authOptions);
-  const collection = session
-    ? await prisma.termCollection.findFirst({
-        where: { id: params.id, ownerId: session.user.id },
-      })
-    : undefined;
+  const collection =
+    session && ObjectId.isValid(params.id)
+      ? await prisma.termCollection.findFirst({
+          where: { id: params.id, ownerId: session.user.id },
+        })
+      : undefined;
 
   if (collection && session) {
     const terms = await prisma.userTerms.findMany({
@@ -36,10 +35,9 @@ export default async function Collection({
     return (
       <TermList
         title={collection.name}
-        terms={userTerms}
         userId={session.user.id}
-        handleMarkTerm={handleMarkTerm}
-        handleRemoveMarkTerm={handleRemoveMarkTerm}
+        terms={userTerms}
+        collectionId={params.id}
       />
     );
   }

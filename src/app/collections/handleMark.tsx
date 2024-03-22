@@ -1,7 +1,8 @@
-import { PrismaClient, TermMark } from "@prisma/client";
-import { revalidatePath } from "next/cache";
+"use server";
 
-const prisma = new PrismaClient();
+import { TermMark } from "@prisma/client";
+import { revalidatePath } from "next/cache";
+import { prisma } from "../prismaClient";
 
 export async function handleMarkTerm(
   termId: string,

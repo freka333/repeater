@@ -13,7 +13,7 @@ import {
 interface MobileCollectionProps {
   terms: IrregularVerbWithUserInfo[] | TermWithUserInfo[];
   userId: string;
-  filter: ReactNode;
+  header: ReactNode;
   handleMarkTerm: (
     termId: string,
     userId: string,
@@ -25,13 +25,13 @@ interface MobileCollectionProps {
 export const MobileCollection: FC<MobileCollectionProps> = ({
   terms,
   userId,
-  filter,
+  header,
   handleMarkTerm,
   handleRemoveMarkTerm,
 }) => {
   return (
     <Box sx={{ display: "flex", flexDirection: "column" }}>
-      {filter}
+      {header}
       {terms.map((term, i) => {
         const rows: Row[] =
           term.type === "IrregularVerb"
