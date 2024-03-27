@@ -11,8 +11,14 @@ import {
 } from "@mui/material";
 import { TermMark } from "@prisma/client";
 import { FC } from "react";
-import { ManualState, Row } from "@/types/collectionTypes";
-import { MarkButton } from "./MarkButton";
+import {
+  IrregularVerbWithUserInfo,
+  ManualState,
+  Row,
+  TermWithUserInfo,
+} from "@/types/collectionTypes";
+import { MarkButton } from "./actions/MarkButton";
+import { MoreOptionsButton } from "./actions/MoreOptionsButton";
 
 const StyledTableHead = styled(TableCell)(() => ({
   whiteSpace: "nowrap",
@@ -29,7 +35,7 @@ const StyledTableCell = styled(TableCell)(() => ({
 }));
 
 interface TermCardProps {
-  termId: string;
+  term: TermWithUserInfo | IrregularVerbWithUserInfo;
   userId: string;
   mark: ManualState;
   rows: Row[];
@@ -42,7 +48,7 @@ interface TermCardProps {
 }
 
 export const TermCard: FC<TermCardProps> = ({
-  termId,
+  term,
   userId,
   mark,
   rows,
@@ -55,8 +61,18 @@ export const TermCard: FC<TermCardProps> = ({
         m: 2,
         width: "auto",
         boxShadow: `0 0 2px ${theme.palette.greyColor.main}`,
+        position: "relative",
+        pt: 2,
       })}
     >
+      {term?.type === "Term" && (
+        <MoreOptionsButton
+          userId={userId}
+          term={term}
+          sx={{ position: "absolute", top: "0.5rem", right: "0.5rem" }}
+        />
+      )}
+
       <Table>
         <TableBody>
           {rows.map((row, i) => (
@@ -73,9 +89,9 @@ export const TermCard: FC<TermCardProps> = ({
           isMarked={mark === "Known"}
           onClick={async () => {
             if (mark === "Known") {
-              await handleRemoveMarkTerm(termId, userId);
+              await handleRemoveMarkTerm(term.id, userId);
             } else {
-              await handleMarkTerm(termId, userId, "Known");
+              await handleMarkTerm(term.id, userId, "Known");
             }
           }}
         />
@@ -84,9 +100,9 @@ export const TermCard: FC<TermCardProps> = ({
           isMarked={mark === "Repeatable"}
           onClick={async () => {
             if (mark === "Repeatable") {
-              await handleRemoveMarkTerm(termId, userId);
+              await handleRemoveMarkTerm(term.id, userId);
             } else {
-              await handleMarkTerm(termId, userId, "Repeatable");
+              await handleMarkTerm(term.id, userId, "Repeatable");
             }
           }}
         />

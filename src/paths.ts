@@ -7,6 +7,7 @@ export const paths = {
     path: "/collections/all-user-terms",
     name: "All terms",
   },
+  collections: { path: "/collections/" },
   collection: {
     path: (id: string) => `/collections/${id}`,
   },

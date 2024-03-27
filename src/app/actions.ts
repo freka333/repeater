@@ -31,6 +31,11 @@ export async function addTermToCollection(
   revalidatePath(paths.collection.path(collectionId));
 }
 
+export async function deleteTerm(userId: string, termId: string) {
+  await prisma.userTerms.delete({ where: { ownerId: userId, id: termId } });
+  revalidatePath(paths.collections.path);
+}
+
 export async function handleMarkVerb(
   verbId: string,
   userId: string,

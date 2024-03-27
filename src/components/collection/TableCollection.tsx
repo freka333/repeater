@@ -8,14 +8,21 @@ import {
   TableHead,
   TableRow,
   Typography,
+  styled,
 } from "@mui/material";
 import { TermMark } from "@prisma/client";
 import { FC, ReactNode } from "react";
-import { MarkButton } from "./MarkButton";
+import { MarkButton } from "./actions/MarkButton";
 import {
   IrregularVerbWithUserInfo,
   TermWithUserInfo,
 } from "@/types/collectionTypes";
+import { MoreOptionsButton } from "./actions/MoreOptionsButton";
+
+const ActionsColumn = styled(TableCell)(() => ({
+  whiteSpace: "nowrap",
+  width: "auto",
+}));
 
 interface TableCollectionProps {
   terms: TermWithUserInfo[] | IrregularVerbWithUserInfo[];
@@ -60,13 +67,13 @@ export const TableCollection: FC<TableCollectionProps> = ({
                   <TableCell>Infinitive</TableCell>
                   <TableCell>Past Simple (V2)</TableCell>
                   <TableCell>Past Participle (V3)</TableCell>
-                  <TableCell>Actions</TableCell>
+                  <ActionsColumn>Actions</ActionsColumn>
                 </TableRow>
               ) : (
                 <TableRow>
-                  <TableCell>Magyar jelentés</TableCell>
-                  <TableCell>English</TableCell>
-                  <TableCell>Actions</TableCell>
+                  <TableCell width="50%">Magyar jelentés</TableCell>
+                  <TableCell width="50%">English</TableCell>
+                  <ActionsColumn>Actions</ActionsColumn>
                 </TableRow>
               )}
             </TableHead>
@@ -86,7 +93,7 @@ export const TableCollection: FC<TableCollectionProps> = ({
                     ) : (
                       <TableCell>{term.english}</TableCell>
                     )}
-                    <TableCell>
+                    <TableCell sx={{ display: "flex", alignItems: "center" }}>
                       <MarkButton
                         mark="Known"
                         isMarked={isKnown}
@@ -109,6 +116,9 @@ export const TableCollection: FC<TableCollectionProps> = ({
                           }
                         }}
                       />
+                      {term.type === "Term" && (
+                        <MoreOptionsButton term={term} userId={userId} />
+                      )}
                     </TableCell>
                   </TableRow>
                 );

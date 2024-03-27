@@ -49,7 +49,7 @@ export const MobileCollection: FC<MobileCollectionProps> = ({
           <TermCard
             key={i}
             rows={rows}
-            termId={term.id}
+            term={term}
             userId={userId}
             mark={term.manualState}
             handleMarkTerm={handleMarkTerm}
