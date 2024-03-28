@@ -1,7 +1,8 @@
-import { Box, Button, Stack, Typography, useMediaQuery } from "@mui/material";
-import { Dispatch, FC, ReactNode, SetStateAction, useState } from "react";
-import theme from "@/theme";
+import { Box, Button, Stack, Typography } from "@mui/material";
+import { FC, ReactNode, useState } from "react";
 import { AddNewTermDialog } from "./AddNewTermDialog";
+import { AddCircle } from "@mui/icons-material";
+import { CollectionOptions } from "./actions/CollectionOptions";
 
 export type displayedItems = {
   Unmarked: boolean;
@@ -24,11 +25,9 @@ export const TermCollectionHeader: FC<TermCollectionHeaderProps> = ({
 }) => {
   const [openAddTerminalDialog, setOpenAddTerminalDialog] = useState(false);
 
-  const handleCloseDialog = () => {
+  const handleCloseAddDialog = () => {
     setOpenAddTerminalDialog(false);
   };
-
-  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
   return (
     <Box
@@ -42,26 +41,34 @@ export const TermCollectionHeader: FC<TermCollectionHeaderProps> = ({
         gap: 2,
       }}
     >
-      <Stack direction={isMobile ? "column" : "row"} gap={2}>
-        <Typography variant="h6" textAlign={isMobile ? "center" : "left"}>
-          {title}
-        </Typography>
+      <Stack direction={{ xs: "column", md: "row" }} gap={2}>
+        <Stack direction="row" alignItems="center">
+          <Typography variant="h6" textAlign={{ xs: "center", sm: "left" }}>
+            {title}
+          </Typography>
+          <CollectionOptions
+            collectionId={collectionId}
+            userId={userId}
+            name={title}
+          />
+        </Stack>
         <Button
           variant="outlined"
           onClick={() => {
             setOpenAddTerminalDialog(true);
           }}
+          startIcon={<AddCircle />}
         >
           Add new term
         </Button>
-        <AddNewTermDialog
-          open={openAddTerminalDialog}
-          handleClose={handleCloseDialog}
-          userId={userId}
-          collectionId={collectionId}
-        />
       </Stack>
       {filter}
+      <AddNewTermDialog
+        open={openAddTerminalDialog}
+        handleClose={handleCloseAddDialog}
+        userId={userId}
+        collectionId={collectionId}
+      />
     </Box>
   );
 };

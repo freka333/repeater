@@ -3,12 +3,6 @@ import theme from "@/theme";
 import { TermWithUserInfo } from "@/types/collectionTypes";
 import { MoreHoriz, MoreVert } from "@mui/icons-material";
 import {
-  Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  DialogTitle,
   IconButton,
   Menu,
   MenuItem,
@@ -17,6 +11,7 @@ import {
   useMediaQuery,
 } from "@mui/material";
 import { FC, useState } from "react";
+import { DeleteDialog } from "./DeleteDialog";
 
 interface MoreOptionsButtonProps {
   term: TermWithUserInfo;
@@ -70,29 +65,13 @@ export const MoreOptionsButton: FC<MoreOptionsButtonProps> = ({
           Delete
         </MenuItem>
       </Menu>
-      <Dialog open={openDeleteDialog} onClose={handleCloseDelete} maxWidth="sm">
-        <DialogTitle>
-          Delete{" "}
-          <strong>
-            {term.hungarian} - {term.english}
-          </strong>{" "}
-          term
-        </DialogTitle>
-        <DialogContent>
-          <DialogContentText>
-            Are you sure you want to delete this term? You won&apos;t be able to
-            revert this.
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button variant="outlined" onClick={handleCloseDelete}>
-            Cancel
-          </Button>
-          <Button variant="contained" onClick={handleDeleteItem}>
-            Delete
-          </Button>
-        </DialogActions>
-      </Dialog>
+      <DeleteDialog
+        open={openDeleteDialog}
+        handleClose={handleCloseDelete}
+        name={`${term.hungarian} - ${term.english} term`}
+        type="term"
+        handleDelete={handleDeleteItem}
+      />
     </>
   );
 };

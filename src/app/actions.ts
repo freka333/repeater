@@ -9,9 +9,18 @@ export async function createCollection(name: string, userId: string) {
   const collection = await prisma.termCollection.create({
     data: { name: name, ownerId: userId },
   });
-
   revalidatePath("/", "layout");
   return collection.id;
+}
+
+export async function deleteCollection(collectionId: string, userId: string) {
+  await prisma.userTerms.deleteMany({
+    where: { collectionId: collectionId, ownerId: userId },
+  });
+  await prisma.termCollection.delete({
+    where: { id: collectionId, ownerId: userId },
+  });
+  revalidatePath("/", "layout");
 }
 
 export async function addTermToCollection(
