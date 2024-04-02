@@ -2,8 +2,8 @@ import { getServerSession } from "next-auth/next";
 import { NotFound } from "@/components/pageComponents/NotFound";
 import { IrregularVerbList } from "@/components/collection/IrregularVerbList";
 import { IrregularVerbWithUserInfo } from "@/types/collectionTypes";
-import { authOptions } from "../api/auth/[...nextauth]/route";
 import { prisma } from "../prismaClient";
+import authOptions from "@/lib/configs/authOptions";
 
 export default async function IrregularVerbs() {
   const session = await getServerSession(authOptions);

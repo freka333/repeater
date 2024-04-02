@@ -6,8 +6,8 @@ import Navbar from "@/components/appbar/Navbar";
 import { AlertProvider, NextAuthProvider } from "./provider";
 import { CssBaseline } from "@mui/material";
 import { getServerSession } from "next-auth/next";
-import { authOptions } from "./api/auth/[...nextauth]/route";
 import { prisma } from "./prismaClient";
+import authOptions from "@/lib/configs/authOptions";
 
 export const metadata: Metadata = {
   title: "Repeater",

@@ -1,10 +1,10 @@
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import { TermList } from "@/components/collection/TermList";
 import { NotFound } from "@/components/pageComponents/NotFound";
 import { getServerSession } from "next-auth/next";
 import { TermWithUserInfo } from "@/types/collectionTypes";
 import { ObjectId } from "mongodb";
 import { prisma } from "@/app/prismaClient";
+import authOptions from "@/lib/configs/authOptions";
 
 export default async function Collection({
   params,
