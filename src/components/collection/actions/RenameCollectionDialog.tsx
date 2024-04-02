@@ -7,6 +7,8 @@ import {
   DialogTitle,
   TextField,
 } from "@mui/material";
+import { useRouter } from "next/navigation";
+import { useSnackbar } from "notistack";
 import {
   Dispatch,
   FC,
@@ -35,11 +37,21 @@ export const RenameCollectionDialog: FC<RenameCollectionDialogProps> = ({
 }) => {
   const [collectionName, setCollectionName] = useState(name);
   const inputRef = useRef<HTMLInputElement>(null);
+  const router = useRouter();
+  const { enqueueSnackbar } = useSnackbar();
 
   const handleRename = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    await renameCollection(collectionId, userId, collectionName);
+    const result = await renameCollection(collectionId, userId, collectionName);
+    const message = result.success
+      ? "Successful renaming."
+      : "Oops! Something went wrong. Please try again later.";
+    enqueueSnackbar(message, {
+      autoHideDuration: 3000,
+      variant: result.success ? "success" : "error",
+    });
     handleClose();
+    router.refresh();
   };
 
   return (

@@ -13,9 +13,9 @@ import { FC, ReactNode, useState } from "react";
 import { AddNewTermDialog } from "./AddNewTermDialog";
 import { AddCircle, Delete, Edit, MoreHoriz } from "@mui/icons-material";
 import { deleteCollection } from "@/app/actions";
-import { useRouter } from "next/navigation";
 import { DeleteDialog } from "./actions/DeleteDialog";
 import { RenameCollectionDialog } from "./actions/RenameCollectionDialog";
+import { useSnackbar } from "notistack";
 
 export type displayedItems = {
   Unmarked: boolean;
@@ -38,7 +38,7 @@ export const TermCollectionHeader: FC<TermCollectionHeaderProps> = ({
 }) => {
   const [openAddTerminalDialog, setOpenAddTerminalDialog] = useState(false);
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
-  const router = useRouter();
+  const { enqueueSnackbar } = useSnackbar();
 
   const handleCloseAddDialog = () => {
     setOpenAddTerminalDialog(false);
@@ -49,8 +49,14 @@ export const TermCollectionHeader: FC<TermCollectionHeaderProps> = ({
   };
 
   const handleDeleteCollection = async () => {
-    await deleteCollection(collectionId, userId);
-    router.push("/");
+    const result = await deleteCollection(collectionId, userId);
+    const message = result.success
+      ? `${title} has been successfully deleted.`
+      : "Oops! Something went wrong. Please try again later.";
+    enqueueSnackbar(message, {
+      autoHideDuration: 3000,
+      variant: result.success ? "success" : "error",
+    });
   };
 
   return (

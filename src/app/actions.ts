@@ -2,15 +2,18 @@
 
 import { revalidatePath } from "next/cache";
 import { prisma } from "./prismaClient";
-import { paths } from "@/paths";
 import { TermMark } from "@prisma/client";
 
 export async function createCollection(name: string, userId: string) {
-  const collection = await prisma.termCollection.create({
-    data: { name: name, ownerId: userId },
-  });
-  revalidatePath("/", "layout");
-  return collection.id;
+  try {
+    const collection = await prisma.termCollection.create({
+      data: { name: name, ownerId: userId },
+    });
+    revalidatePath("/", "layout");
+    return { success: true, collectionId: collection.id };
+  } catch (error) {
+    return { success: false, error };
+  }
 }
 
 export async function renameCollection(
@@ -18,21 +21,30 @@ export async function renameCollection(
   userId: string,
   name: string
 ) {
-  await prisma.termCollection.update({
-    where: { id: collectionId, ownerId: userId },
-    data: { name: name },
-  });
-  revalidatePath("/", "layout");
+  try {
+    await prisma.termCollection.update({
+      where: { id: collectionId, ownerId: userId },
+      data: { name: name },
+    });
+    return { success: true };
+  } catch (error) {
+    return { success: false, error };
+  }
 }
 
 export async function deleteCollection(collectionId: string, userId: string) {
-  await prisma.userTerms.deleteMany({
-    where: { collectionId: collectionId, ownerId: userId },
-  });
-  await prisma.termCollection.delete({
-    where: { id: collectionId, ownerId: userId },
-  });
-  revalidatePath("/", "layout");
+  try {
+    await prisma.userTerms.deleteMany({
+      where: { collectionId: collectionId, ownerId: userId },
+    });
+    await prisma.termCollection.delete({
+      where: { id: collectionId, ownerId: userId },
+    });
+    revalidatePath("/", "layout");
+    return { success: true };
+  } catch (error) {
+    return { success: false, error };
+  }
 }
 
 export async function addTermToCollection(

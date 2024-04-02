@@ -10,6 +10,7 @@ import {
   TextField,
 } from "@mui/material";
 import { useRouter } from "next/navigation";
+import { useSnackbar } from "notistack";
 import {
   Dispatch,
   FC,
@@ -34,13 +35,23 @@ export const CreateCollectionDialog: FC<CreateCollectionDialogProps> = ({
   const [collectionName, setCollectionName] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
+  const { enqueueSnackbar } = useSnackbar();
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const collectionId = await createCollection(collectionName, userId);
+    const result = await createCollection(collectionName, userId);
+    const message = result.success
+      ? `${collectionName} successfully created.`
+      : "Oops! Something went wrong. Please try again later.";
+    enqueueSnackbar(message, {
+      autoHideDuration: 3000,
+      variant: result.success ? "success" : "error",
+    });
     setCollectionName("");
     handleClose();
-    router.push(paths.collection.path(collectionId));
+    if (result.success) {
+      router.push(paths.collection.path(result.collectionId!));
+    }
   };
 
   return (
