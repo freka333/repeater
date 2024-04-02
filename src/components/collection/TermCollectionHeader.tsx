@@ -16,6 +16,7 @@ import { deleteCollection } from "@/app/actions";
 import { DeleteDialog } from "./actions/DeleteDialog";
 import { RenameCollectionDialog } from "./actions/RenameCollectionDialog";
 import { useSnackbar } from "notistack";
+import { useRouter } from "next/navigation";
 
 export type displayedItems = {
   Unmarked: boolean;
@@ -39,6 +40,7 @@ export const TermCollectionHeader: FC<TermCollectionHeaderProps> = ({
   const [openAddTerminalDialog, setOpenAddTerminalDialog] = useState(false);
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
   const { enqueueSnackbar } = useSnackbar();
+  const router = useRouter();
 
   const handleCloseAddDialog = () => {
     setOpenAddTerminalDialog(false);
@@ -57,6 +59,7 @@ export const TermCollectionHeader: FC<TermCollectionHeaderProps> = ({
       autoHideDuration: 3000,
       variant: result.success ? "success" : "error",
     });
+    router.push("/");
   };
 
   return (
