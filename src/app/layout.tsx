@@ -3,7 +3,7 @@ import { AppRouterCacheProvider } from "@mui/material-nextjs/v13-appRouter";
 import { ThemeProvider } from "@mui/material/styles";
 import theme from "@/theme";
 import Navbar from "@/components/appbar/Navbar";
-import { NextAuthProvider } from "./provider";
+import { AlertProvider, NextAuthProvider } from "./provider";
 import { CssBaseline } from "@mui/material";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "./api/auth/[...nextauth]/route";
@@ -32,8 +32,10 @@ export default async function RootLayout({
           <AppRouterCacheProvider>
             <ThemeProvider theme={theme}>
               <CssBaseline>
-                <Navbar collections={collections} userId={session?.user.id} />
-                {children}
+                <AlertProvider>
+                  <Navbar collections={collections} userId={session?.user.id} />
+                  {children}
+                </AlertProvider>
               </CssBaseline>
             </ThemeProvider>
           </AppRouterCacheProvider>

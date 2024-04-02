@@ -19,6 +19,7 @@
     "@prisma/client": "^5.10.2",
     "mongodb": "^6.4.0",
     "next": "14.1.1",
+    "notistack": "^3.0.1",
     "react": "^18",
     "react-dom": "^18"
   },

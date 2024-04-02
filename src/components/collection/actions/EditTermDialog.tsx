@@ -2,6 +2,8 @@ import { Dialog } from "@mui/material";
 import { FC, FormEvent, useRef, useState } from "react";
 import { updateTerm } from "@/app/actions";
 import { UserTermDialogInner } from "./UserTermDialogInner";
+import { useRouter } from "next/navigation";
+import { useSnackbar } from "notistack";
 
 interface EditTermDialogProps {
   open: boolean;
@@ -23,11 +25,21 @@ export const EditTermDialog: FC<EditTermDialogProps> = ({
   const [hungarian, setHungarian] = useState(defaultHungarian);
   const [english, setEnglish] = useState(defaultEnglish);
   const inputRef = useRef<HTMLInputElement>(null);
+  const router = useRouter();
+  const { enqueueSnackbar } = useSnackbar();
 
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    updateTerm(userId, termId, hungarian, english);
+    const result = await updateTerm(userId, termId, hungarian, english);
+    const message = result.success
+      ? "The term has been successfully modified."
+      : "Oops! Something went wrong. Please try again later.";
+    enqueueSnackbar(message, {
+      autoHideDuration: 3000,
+      variant: result.success ? "success" : "error",
+    });
     handleClose();
+    router.refresh();
   };
   return (
     <Dialog

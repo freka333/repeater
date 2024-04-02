@@ -15,6 +15,8 @@ import {
 import { FC, useState } from "react";
 import { EditTermDialog } from "./EditTermDialog";
 import { DeleteDialog } from "./DeleteDialog";
+import { useRouter } from "next/navigation";
+import { useSnackbar } from "notistack";
 
 interface MoreOptionsButtonProps {
   term: TermWithUserInfo;
@@ -29,9 +31,19 @@ export const MoreOptionsButton: FC<MoreOptionsButtonProps> = ({
 }) => {
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+  const router = useRouter();
+  const { enqueueSnackbar } = useSnackbar();
 
   const handleDeleteTerm = async () => {
-    await deleteTerm(userId, term.id);
+    const result = await deleteTerm(userId, term.id);
+    const message = result.success
+      ? "The term has been successfully deleted."
+      : "Oops! Something went wrong. Please try again later.";
+    enqueueSnackbar(message, {
+      autoHideDuration: 3000,
+      variant: result.success ? "success" : "error",
+    });
+    router.refresh();
   };
 
   const handleAnchor = (e: React.MouseEvent<HTMLElement>) => {

@@ -2,6 +2,8 @@ import { addTermToCollection } from "@/app/actions";
 import { Dialog } from "@mui/material";
 import { FC, FormEvent, useRef, useState } from "react";
 import { UserTermDialogInner } from "./actions/UserTermDialogInner";
+import { useRouter } from "next/navigation";
+import { useSnackbar } from "notistack";
 
 interface AddNewTermDialogProps {
   open: boolean;
@@ -18,10 +20,25 @@ export const AddNewTermDialog: FC<AddNewTermDialogProps> = ({
   const [hungarian, setHungarian] = useState("");
   const [english, setEnglish] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
+  const router = useRouter();
+  const { enqueueSnackbar } = useSnackbar();
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    await addTermToCollection(userId, hungarian, english, collectionId);
+    const result = await addTermToCollection(
+      userId,
+      hungarian,
+      english,
+      collectionId
+    );
+    const message = result.success
+      ? `The term ${hungarian} - ${english} has been successfully created.`
+      : "Oops! Something went wrong. Please try again later.";
+    enqueueSnackbar(message, {
+      autoHideDuration: 3000,
+      variant: result.success ? "success" : "error",
+    });
+    router.refresh();
     setHungarian("");
     setEnglish("");
     inputRef.current?.focus();

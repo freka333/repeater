@@ -41,15 +41,19 @@ export async function addTermToCollection(
   english: string,
   collectionId: string
 ) {
-  await prisma.userTerms.create({
-    data: {
-      ownerId: userId,
-      hungarian: hungarian,
-      english: english,
-      collectionId: collectionId,
-    },
-  });
-  revalidatePath(paths.collection.path(collectionId));
+  try {
+    await prisma.userTerms.create({
+      data: {
+        ownerId: userId,
+        hungarian: hungarian,
+        english: english,
+        collectionId: collectionId,
+      },
+    });
+    return { success: true };
+  } catch (error) {
+    return { success: false, error };
+  }
 }
 
 export async function updateTerm(
@@ -58,16 +62,24 @@ export async function updateTerm(
   hungarian: string,
   english: string
 ) {
-  await prisma.userTerms.update({
-    where: { id: termId, ownerId: userId },
-    data: { hungarian: hungarian, english: english },
-  });
-  revalidatePath(paths.collections.path);
+  try {
+    await prisma.userTerms.update({
+      where: { id: termId, ownerId: userId },
+      data: { hungarian: hungarian, english: english },
+    });
+    return { success: true };
+  } catch (error) {
+    return { success: false, error };
+  }
 }
 
 export async function deleteTerm(userId: string, termId: string) {
-  await prisma.userTerms.delete({ where: { ownerId: userId, id: termId } });
-  revalidatePath(paths.collections.path);
+  try {
+    await prisma.userTerms.delete({ where: { ownerId: userId, id: termId } });
+    return { success: true };
+  } catch (error) {
+    return { success: false, error };
+  }
 }
 
 export async function handleMarkVerb(
