@@ -11,6 +11,7 @@ import {
   useMediaQuery,
 } from "@mui/material";
 import { FC, useState } from "react";
+import { EditTermDialog } from "./EditTermDialog";
 import { DeleteDialog } from "./DeleteDialog";
 
 interface MoreOptionsButtonProps {
@@ -25,14 +26,9 @@ export const MoreOptionsButton: FC<MoreOptionsButtonProps> = ({
   sx,
 }) => {
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
-  const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
-  const handleCloseDelete = () => {
-    setOpenDeleteDialog(false);
-  };
-
-  const handleDeleteItem = async () => {
+  const handleDeleteTerm = async () => {
     await deleteTerm(userId, term.id);
   };
 
@@ -40,37 +36,20 @@ export const MoreOptionsButton: FC<MoreOptionsButtonProps> = ({
     setAnchorEl(e.currentTarget);
   };
 
+  const handleCloseMenu = () => {
+    setAnchorEl(null);
+  };
+
   return (
     <>
       <MoreButton isMobile={isMobile} sx={sx} handleAnchor={handleAnchor} />
-      <Menu
-        open={!!anchorEl}
+      <OptionsMenu
         anchorEl={anchorEl}
-        onClose={() => {
-          setAnchorEl(null);
-        }}
-        anchorOrigin={{ vertical: "center", horizontal: "center" }}
-        transformOrigin={{
-          vertical: "top",
-          horizontal: "right",
-        }}
-        disableScrollLock
-      >
-        <MenuItem
-          onClick={() => {
-            setOpenDeleteDialog(true);
-            setAnchorEl(null);
-          }}
-        >
-          Delete
-        </MenuItem>
-      </Menu>
-      <DeleteDialog
-        open={openDeleteDialog}
-        handleClose={handleCloseDelete}
         name={`${term.hungarian} - ${term.english} term`}
-        type="term"
-        handleDelete={handleDeleteItem}
+        handleCloseMenu={handleCloseMenu}
+        handleDeleteItem={handleDeleteTerm}
+        term={term}
+        userId={userId}
       />
     </>
   );
@@ -108,5 +87,82 @@ const MoreButton = ({
         <MoreVert />
       </IconButton>
     </Tooltip>
+  );
+};
+
+interface OptionsMenuProps {
+  name: string;
+  anchorEl: HTMLElement | null;
+  handleCloseMenu: VoidFunction;
+  handleDeleteItem: () => Promise<void>;
+  term: TermWithUserInfo;
+  userId: string;
+}
+
+const OptionsMenu: FC<OptionsMenuProps> = ({
+  name,
+  anchorEl,
+  handleCloseMenu,
+  handleDeleteItem,
+  term,
+  userId,
+}) => {
+  const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
+  const [openEditDialog, setOpenEditDialog] = useState(false);
+
+  const handleCloseEditDialog = () => {
+    setOpenEditDialog(false);
+  };
+
+  const handleCloseDeleteDialog = () => {
+    setOpenDeleteDialog(false);
+  };
+
+  return (
+    <>
+      <Menu
+        open={!!anchorEl}
+        anchorEl={anchorEl}
+        onClose={handleCloseMenu}
+        anchorOrigin={{ vertical: "center", horizontal: "center" }}
+        transformOrigin={{
+          vertical: "top",
+          horizontal: "right",
+        }}
+        disableScrollLock
+      >
+        <MenuItem
+          onClick={() => {
+            setOpenEditDialog(true);
+            handleCloseMenu();
+          }}
+        >
+          Edit
+        </MenuItem>
+        <MenuItem
+          onClick={() => {
+            setOpenDeleteDialog(true);
+            handleCloseMenu();
+          }}
+        >
+          Delete
+        </MenuItem>
+      </Menu>
+      <EditTermDialog
+        open={openEditDialog}
+        handleClose={handleCloseEditDialog}
+        defaultHungarian={term.hungarian}
+        defaultEnglish={term.english}
+        termId={term.id}
+        userId={userId}
+      />
+      <DeleteDialog
+        name={name}
+        open={openDeleteDialog}
+        handleClose={handleCloseDeleteDialog}
+        handleDelete={handleDeleteItem}
+        type="term"
+      />
+    </>
   );
 };

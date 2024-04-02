@@ -13,6 +13,18 @@ export async function createCollection(name: string, userId: string) {
   return collection.id;
 }
 
+export async function renameCollection(
+  collectionId: string,
+  userId: string,
+  name: string
+) {
+  await prisma.termCollection.update({
+    where: { id: collectionId, ownerId: userId },
+    data: { name: name },
+  });
+  revalidatePath("/", "layout");
+}
+
 export async function deleteCollection(collectionId: string, userId: string) {
   await prisma.userTerms.deleteMany({
     where: { collectionId: collectionId, ownerId: userId },
@@ -38,6 +50,19 @@ export async function addTermToCollection(
     },
   });
   revalidatePath(paths.collection.path(collectionId));
+}
+
+export async function updateTerm(
+  userId: string,
+  termId: string,
+  hungarian: string,
+  english: string
+) {
+  await prisma.userTerms.update({
+    where: { id: termId, ownerId: userId },
+    data: { hungarian: hungarian, english: english },
+  });
+  revalidatePath(paths.collections.path);
 }
 
 export async function deleteTerm(userId: string, termId: string) {

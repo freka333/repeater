@@ -1,30 +1,33 @@
-import { addTermToCollection } from "@/app/actions";
 import { Dialog } from "@mui/material";
 import { FC, FormEvent, useRef, useState } from "react";
-import { UserTermDialogInner } from "./actions/UserTermDialogInner";
+import { updateTerm } from "@/app/actions";
+import { UserTermDialogInner } from "./UserTermDialogInner";
 
-interface AddNewTermDialogProps {
+interface EditTermDialogProps {
   open: boolean;
   handleClose: VoidFunction;
+  defaultHungarian: string;
+  defaultEnglish: string;
+  termId: string;
   userId: string;
-  collectionId: string;
 }
-export const AddNewTermDialog: FC<AddNewTermDialogProps> = ({
+
+export const EditTermDialog: FC<EditTermDialogProps> = ({
   open,
   handleClose,
+  defaultHungarian,
+  defaultEnglish,
+  termId,
   userId,
-  collectionId,
 }) => {
-  const [hungarian, setHungarian] = useState("");
-  const [english, setEnglish] = useState("");
+  const [hungarian, setHungarian] = useState(defaultHungarian);
+  const [english, setEnglish] = useState(defaultEnglish);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    await addTermToCollection(userId, hungarian, english, collectionId);
-    setHungarian("");
-    setEnglish("");
-    inputRef.current?.focus();
+    updateTerm(userId, termId, hungarian, english);
+    handleClose();
   };
   return (
     <Dialog
@@ -43,10 +46,10 @@ export const AddNewTermDialog: FC<AddNewTermDialogProps> = ({
         english={english}
         setHungarian={setHungarian}
         setEnglish={setEnglish}
+        title="Edit term"
         handleClose={handleClose}
         inputRef={inputRef}
-        title="Add new term"
-        saveButtonText="Save and add next"
+        saveButtonText="Save changes"
       />
     </Dialog>
   );
