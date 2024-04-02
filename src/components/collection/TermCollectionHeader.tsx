@@ -2,6 +2,8 @@ import {
   Box,
   Button,
   IconButton,
+  ListItemIcon,
+  ListItemText,
   Menu,
   MenuItem,
   Stack,
@@ -9,7 +11,7 @@ import {
 } from "@mui/material";
 import { FC, ReactNode, useState } from "react";
 import { AddNewTermDialog } from "./AddNewTermDialog";
-import { AddCircle, MoreHoriz } from "@mui/icons-material";
+import { AddCircle, Delete, Edit, MoreHoriz } from "@mui/icons-material";
 import { deleteCollection } from "@/app/actions";
 import { useRouter } from "next/navigation";
 import { DeleteDialog } from "./actions/DeleteDialog";
@@ -148,7 +150,10 @@ const OptionsMenu: FC<OptionsMenuProps> = ({
             handleCloseMenu();
           }}
         >
-          Rename
+          <ListItemIcon>
+            <Edit />
+          </ListItemIcon>
+          <ListItemText>Rename</ListItemText>
         </MenuItem>
         <MenuItem
           onClick={() => {
@@ -156,7 +161,10 @@ const OptionsMenu: FC<OptionsMenuProps> = ({
             handleCloseMenu();
           }}
         >
-          Delete collection
+          <ListItemIcon>
+            <Delete />
+          </ListItemIcon>
+          <ListItemText>Delete collection</ListItemText>
         </MenuItem>
       </Menu>
       <RenameCollectionDialog

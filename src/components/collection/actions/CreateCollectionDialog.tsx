@@ -98,6 +98,7 @@ const DialogInner: FC<DialogInnerProps> = ({
           type="text"
           fullWidth
           inputRef={inputRef}
+          margin="dense"
         />
         <DialogActions>
           <Button onClick={handleClose}>Cancel</Button>

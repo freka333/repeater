@@ -63,7 +63,7 @@ export const TableCollection: FC<TableCollectionProps> = ({
             <TableHead>
               {terms[0].type === "IrregularVerb" ? (
                 <TableRow>
-                  <TableCell>Magyar jelentés</TableCell>
+                  <TableCell>Hungarian</TableCell>
                   <TableCell>Infinitive</TableCell>
                   <TableCell>Past Simple (V2)</TableCell>
                   <TableCell>Past Participle (V3)</TableCell>
@@ -71,7 +71,7 @@ export const TableCollection: FC<TableCollectionProps> = ({
                 </TableRow>
               ) : (
                 <TableRow>
-                  <TableCell width="50%">Magyar jelentés</TableCell>
+                  <TableCell width="50%">Hungarian</TableCell>
                   <TableCell width="50%">English</TableCell>
                   <ActionsColumn>Actions</ActionsColumn>
                 </TableRow>

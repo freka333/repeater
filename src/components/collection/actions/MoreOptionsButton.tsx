@@ -1,9 +1,11 @@
 import { deleteTerm } from "@/app/actions";
 import theme from "@/theme";
 import { TermWithUserInfo } from "@/types/collectionTypes";
-import { MoreHoriz, MoreVert } from "@mui/icons-material";
+import { Delete, Edit, MoreHoriz, MoreVert } from "@mui/icons-material";
 import {
   IconButton,
+  ListItemIcon,
+  ListItemText,
   Menu,
   MenuItem,
   SxProps,
@@ -137,7 +139,10 @@ const OptionsMenu: FC<OptionsMenuProps> = ({
             handleCloseMenu();
           }}
         >
-          Edit
+          <ListItemIcon>
+            <Edit />
+          </ListItemIcon>
+          <ListItemText>Edit</ListItemText>
         </MenuItem>
         <MenuItem
           onClick={() => {
@@ -145,7 +150,10 @@ const OptionsMenu: FC<OptionsMenuProps> = ({
             handleCloseMenu();
           }}
         >
-          Delete
+          <ListItemIcon>
+            <Delete />
+          </ListItemIcon>
+          <ListItemText>Delete</ListItemText>
         </MenuItem>
       </Menu>
       <EditTermDialog
