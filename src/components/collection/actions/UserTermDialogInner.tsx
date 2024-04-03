@@ -17,6 +17,7 @@ interface UserTermDialogInnerProps {
   inputRef: RefObject<HTMLInputElement>;
   title: string;
   saveButtonText: string;
+  isLoading: boolean;
 }
 
 export const UserTermDialogInner: FC<UserTermDialogInnerProps> = ({
@@ -28,6 +29,7 @@ export const UserTermDialogInner: FC<UserTermDialogInnerProps> = ({
   inputRef,
   title,
   saveButtonText,
+  isLoading,
 }) => {
   useEffect(() => {
     inputRef.current?.focus();
@@ -48,7 +50,7 @@ export const UserTermDialogInner: FC<UserTermDialogInnerProps> = ({
           name="hungarian"
           inputRef={inputRef}
         />
-        <DialogContentText>English</DialogContentText>
+        <DialogContentText sx={{ mt: 2 }}>English</DialogContentText>
         <TextField
           fullWidth
           value={english}
@@ -62,7 +64,9 @@ export const UserTermDialogInner: FC<UserTermDialogInnerProps> = ({
       </DialogContent>
       <DialogActions sx={{ gap: 2 }}>
         <Button onClick={handleClose}>Cancel</Button>
-        <Button type="submit">{saveButtonText}</Button>
+        <Button type="submit" disabled={isLoading}>
+          {saveButtonText}
+        </Button>
       </DialogActions>
     </>
   );

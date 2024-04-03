@@ -24,12 +24,14 @@ export const EditTermDialog: FC<EditTermDialogProps> = ({
 }) => {
   const [hungarian, setHungarian] = useState(defaultHungarian);
   const [english, setEnglish] = useState(defaultEnglish);
+  const [isLoading, setIsLoading] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
   const { enqueueSnackbar } = useSnackbar();
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    setIsLoading(true);
     const result = await updateTerm(userId, termId, hungarian, english);
     const message = result.success
       ? "The term has been successfully modified."
@@ -39,6 +41,7 @@ export const EditTermDialog: FC<EditTermDialogProps> = ({
       variant: result.success ? "success" : "error",
     });
     handleClose();
+    setIsLoading(false);
     router.refresh();
   };
   return (
@@ -62,6 +65,7 @@ export const EditTermDialog: FC<EditTermDialogProps> = ({
         handleClose={handleClose}
         inputRef={inputRef}
         saveButtonText="Save changes"
+        isLoading={isLoading}
       />
     </Dialog>
   );

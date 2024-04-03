@@ -31,20 +31,6 @@ export const MoreOptionsButton: FC<MoreOptionsButtonProps> = ({
 }) => {
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
-  const router = useRouter();
-  const { enqueueSnackbar } = useSnackbar();
-
-  const handleDeleteTerm = async () => {
-    const result = await deleteTerm(userId, term.id);
-    const message = result.success
-      ? "The term has been successfully deleted."
-      : "Oops! Something went wrong. Please try again later.";
-    enqueueSnackbar(message, {
-      autoHideDuration: 3000,
-      variant: result.success ? "success" : "error",
-    });
-    router.refresh();
-  };
 
   const handleAnchor = (e: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(e.currentTarget);
@@ -61,7 +47,6 @@ export const MoreOptionsButton: FC<MoreOptionsButtonProps> = ({
         anchorEl={anchorEl}
         name={`${term.hungarian} - ${term.english} term`}
         handleCloseMenu={handleCloseMenu}
-        handleDeleteItem={handleDeleteTerm}
         term={term}
         userId={userId}
       />
@@ -108,7 +93,6 @@ interface OptionsMenuProps {
   name: string;
   anchorEl: HTMLElement | null;
   handleCloseMenu: VoidFunction;
-  handleDeleteItem: () => Promise<void>;
   term: TermWithUserInfo;
   userId: string;
 }
@@ -117,12 +101,14 @@ const OptionsMenu: FC<OptionsMenuProps> = ({
   name,
   anchorEl,
   handleCloseMenu,
-  handleDeleteItem,
   term,
   userId,
 }) => {
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
   const [openEditDialog, setOpenEditDialog] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const router = useRouter();
+  const { enqueueSnackbar } = useSnackbar();
 
   const handleCloseEditDialog = () => {
     setOpenEditDialog(false);
@@ -130,6 +116,21 @@ const OptionsMenu: FC<OptionsMenuProps> = ({
 
   const handleCloseDeleteDialog = () => {
     setOpenDeleteDialog(false);
+  };
+
+  const handleDeleteTerm = async () => {
+    setIsLoading(true);
+    const result = await deleteTerm(userId, term.id);
+    const message = result.success
+      ? "The term has been successfully deleted."
+      : "Oops! Something went wrong. Please try again later.";
+    enqueueSnackbar(message, {
+      autoHideDuration: 3000,
+      variant: result.success ? "success" : "error",
+    });
+    handleCloseDeleteDialog();
+    setIsLoading(false);
+    router.refresh();
   };
 
   return (
@@ -180,8 +181,9 @@ const OptionsMenu: FC<OptionsMenuProps> = ({
         name={name}
         open={openDeleteDialog}
         handleClose={handleCloseDeleteDialog}
-        handleDelete={handleDeleteItem}
+        handleDelete={handleDeleteTerm}
         type="term"
+        isLoading={isLoading}
       />
     </>
   );

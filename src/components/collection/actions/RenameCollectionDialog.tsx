@@ -36,12 +36,14 @@ export const RenameCollectionDialog: FC<RenameCollectionDialogProps> = ({
   userId,
 }) => {
   const [collectionName, setCollectionName] = useState(name);
+  const [isLoading, setIsLoading] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
   const { enqueueSnackbar } = useSnackbar();
 
   const handleRename = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    setIsLoading(true);
     const result = await renameCollection(collectionId, userId, collectionName);
     const message = result.success
       ? "Successful renaming."
@@ -51,6 +53,7 @@ export const RenameCollectionDialog: FC<RenameCollectionDialogProps> = ({
       variant: result.success ? "success" : "error",
     });
     handleClose();
+    setIsLoading(false);
     router.refresh();
   };
 
@@ -72,6 +75,7 @@ export const RenameCollectionDialog: FC<RenameCollectionDialogProps> = ({
         handleClose={handleClose}
         setCollectionName={setCollectionName}
         inputRef={inputRef}
+        isLoading={isLoading}
       />
     </Dialog>
   );
@@ -82,12 +86,14 @@ interface DialogInnerProps {
   setCollectionName: Dispatch<SetStateAction<string>>;
   handleClose: VoidFunction;
   inputRef: RefObject<HTMLInputElement>;
+  isLoading: boolean;
 }
 const DialogInner: FC<DialogInnerProps> = ({
   collectionName,
   setCollectionName,
   handleClose,
   inputRef,
+  isLoading,
 }) => {
   useEffect(() => {
     inputRef.current?.focus();
@@ -110,7 +116,9 @@ const DialogInner: FC<DialogInnerProps> = ({
         />
         <DialogActions>
           <Button onClick={handleClose}>Cancel</Button>
-          <Button type="submit">Save</Button>
+          <Button type="submit" disabled={isLoading}>
+            Save
+          </Button>
         </DialogActions>
       </DialogContent>
     </>

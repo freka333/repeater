@@ -1,7 +1,7 @@
 import { addTermToCollection } from "@/app/actions";
 import { Dialog } from "@mui/material";
 import { FC, FormEvent, useRef, useState } from "react";
-import { UserTermDialogInner } from "./actions/UserTermDialogInner";
+import { UserTermDialogInner } from "./UserTermDialogInner";
 import { useRouter } from "next/navigation";
 import { useSnackbar } from "notistack";
 
@@ -19,12 +19,14 @@ export const AddNewTermDialog: FC<AddNewTermDialogProps> = ({
 }) => {
   const [hungarian, setHungarian] = useState("");
   const [english, setEnglish] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
   const { enqueueSnackbar } = useSnackbar();
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    setIsLoading(true);
     const result = await addTermToCollection(
       userId,
       hungarian,
@@ -41,6 +43,7 @@ export const AddNewTermDialog: FC<AddNewTermDialogProps> = ({
     router.refresh();
     setHungarian("");
     setEnglish("");
+    setIsLoading(false);
     inputRef.current?.focus();
   };
   return (
@@ -64,6 +67,7 @@ export const AddNewTermDialog: FC<AddNewTermDialogProps> = ({
         inputRef={inputRef}
         title="Add new term"
         saveButtonText="Save and add next"
+        isLoading={isLoading}
       />
     </Dialog>
   );

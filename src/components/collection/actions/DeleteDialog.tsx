@@ -14,6 +14,7 @@ interface DeleteDialogProps {
   type: string;
   handleClose: VoidFunction;
   handleDelete: VoidFunction;
+  isLoading: boolean;
 }
 
 export const DeleteDialog: FC<DeleteDialogProps> = ({
@@ -22,6 +23,7 @@ export const DeleteDialog: FC<DeleteDialogProps> = ({
   handleDelete,
   name,
   type,
+  isLoading,
 }) => {
   return (
     <Dialog open={open} onClose={handleClose} fullWidth maxWidth="xs">
@@ -36,7 +38,7 @@ export const DeleteDialog: FC<DeleteDialogProps> = ({
         <Button variant="outlined" onClick={handleClose}>
           Cancel
         </Button>
-        <Button variant="contained" onClick={handleDelete}>
+        <Button variant="contained" onClick={handleDelete} disabled={isLoading}>
           Delete
         </Button>
       </DialogActions>

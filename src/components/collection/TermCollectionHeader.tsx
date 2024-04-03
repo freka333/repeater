@@ -10,7 +10,7 @@ import {
   Typography,
 } from "@mui/material";
 import { FC, ReactNode, useState } from "react";
-import { AddNewTermDialog } from "./AddNewTermDialog";
+import { AddNewTermDialog } from "./actions/AddNewTermDialog";
 import { AddCircle, Delete, Edit, MoreHoriz } from "@mui/icons-material";
 import { deleteCollection } from "@/app/actions";
 import { DeleteDialog } from "./actions/DeleteDialog";
@@ -39,8 +39,6 @@ export const TermCollectionHeader: FC<TermCollectionHeaderProps> = ({
 }) => {
   const [openAddTerminalDialog, setOpenAddTerminalDialog] = useState(false);
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
-  const { enqueueSnackbar } = useSnackbar();
-  const router = useRouter();
 
   const handleCloseAddDialog = () => {
     setOpenAddTerminalDialog(false);
@@ -48,18 +46,6 @@ export const TermCollectionHeader: FC<TermCollectionHeaderProps> = ({
 
   const handleCloseMenu = () => {
     setAnchorEl(null);
-  };
-
-  const handleDeleteCollection = async () => {
-    const result = await deleteCollection(collectionId, userId);
-    const message = result.success
-      ? `${title} has been successfully deleted.`
-      : "Oops! Something went wrong. Please try again later.";
-    enqueueSnackbar(message, {
-      autoHideDuration: 3000,
-      variant: result.success ? "success" : "error",
-    });
-    router.push("/");
   };
 
   return (
@@ -90,7 +76,6 @@ export const TermCollectionHeader: FC<TermCollectionHeaderProps> = ({
             anchorEl={anchorEl}
             name={title}
             handleCloseMenu={handleCloseMenu}
-            handleDeleteItem={handleDeleteCollection}
             collectionId={collectionId}
             userId={userId}
           />
@@ -120,7 +105,6 @@ interface OptionsMenuProps {
   name: string;
   anchorEl: HTMLElement | null;
   handleCloseMenu: VoidFunction;
-  handleDeleteItem: () => Promise<void>;
   collectionId: string;
   userId: string;
 }
@@ -129,12 +113,14 @@ const OptionsMenu: FC<OptionsMenuProps> = ({
   name,
   anchorEl,
   handleCloseMenu,
-  handleDeleteItem,
   collectionId,
   userId,
 }) => {
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
   const [openRenameDialog, setOpenRenameDialog] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const { enqueueSnackbar } = useSnackbar();
+  const router = useRouter();
 
   const handleCloseRenameDialog = () => {
     setOpenRenameDialog(false);
@@ -142,6 +128,21 @@ const OptionsMenu: FC<OptionsMenuProps> = ({
 
   const handleCloseDeleteDialog = () => {
     setOpenDeleteDialog(false);
+  };
+
+  const handleDeleteCollection = async () => {
+    setIsLoading(true);
+    const result = await deleteCollection(collectionId, userId);
+    const message = result.success
+      ? `${name} has been successfully deleted.`
+      : "Oops! Something went wrong. Please try again later.";
+    enqueueSnackbar(message, {
+      autoHideDuration: 3000,
+      variant: result.success ? "success" : "error",
+    });
+    handleCloseDeleteDialog();
+    setIsLoading(false);
+    router.push("/");
   };
 
   return (
@@ -187,8 +188,9 @@ const OptionsMenu: FC<OptionsMenuProps> = ({
         name={name}
         open={openDeleteDialog}
         handleClose={handleCloseDeleteDialog}
-        handleDelete={handleDeleteItem}
+        handleDelete={handleDeleteCollection}
         type="collection"
+        isLoading={isLoading}
       />
     </>
   );

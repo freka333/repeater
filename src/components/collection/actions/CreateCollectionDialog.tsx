@@ -33,12 +33,14 @@ export const CreateCollectionDialog: FC<CreateCollectionDialogProps> = ({
   userId,
 }) => {
   const [collectionName, setCollectionName] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
   const { enqueueSnackbar } = useSnackbar();
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    setIsLoading(true);
     const result = await createCollection(collectionName, userId);
     const message = result.success
       ? `${collectionName} successfully created.`
@@ -49,6 +51,7 @@ export const CreateCollectionDialog: FC<CreateCollectionDialogProps> = ({
     });
     setCollectionName("");
     handleClose();
+    setIsLoading(false);
     if (result.success) {
       router.push(paths.collection.path(result.collectionId!));
     }
@@ -71,6 +74,7 @@ export const CreateCollectionDialog: FC<CreateCollectionDialogProps> = ({
         inputRef={inputRef}
         setCollectionName={setCollectionName}
         handleClose={handleClose}
+        isLoading={isLoading}
       />
     </Dialog>
   );
@@ -81,12 +85,14 @@ interface DialogInnerProps {
   setCollectionName: Dispatch<SetStateAction<string>>;
   handleClose: VoidFunction;
   inputRef: RefObject<HTMLInputElement>;
+  isLoading: boolean;
 }
 const DialogInner: FC<DialogInnerProps> = ({
   collectionName,
   setCollectionName,
   handleClose,
   inputRef,
+  isLoading,
 }) => {
   useEffect(() => {
     inputRef.current?.focus();
@@ -113,7 +119,9 @@ const DialogInner: FC<DialogInnerProps> = ({
         />
         <DialogActions>
           <Button onClick={handleClose}>Cancel</Button>
-          <Button type="submit">Create</Button>
+          <Button type="submit" disabled={isLoading}>
+            Create
+          </Button>
         </DialogActions>
       </DialogContent>
     </>
