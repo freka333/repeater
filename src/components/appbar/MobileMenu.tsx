@@ -48,6 +48,9 @@ export const MobileMenu = ({
               component={Link}
               href={paths.irregularVerbs.path}
               sx={{ padding: 0 }}
+              onClick={() => {
+                setOpenMenu(false);
+              }}
             >
               <ListItemText>{paths.irregularVerbs.name}</ListItemText>
             </ListItemButton>
