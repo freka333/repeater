@@ -9,12 +9,15 @@ import {
   Toolbar,
   Typography,
   styled,
+  useMediaQuery,
 } from "@mui/material";
 import { useSession } from "next-auth/react";
 import { UserCollections } from "./UserCollections";
 import Link from "next/link";
 import { paths } from "@/paths";
 import { TermCollection } from "@prisma/client";
+import theme from "@/theme";
+import { MobileMenu } from "./MobileMenu";
 
 export default function Navbar({
   collections,
@@ -27,10 +30,15 @@ export default function Navbar({
 
   const Offset = styled("div")(({ theme }) => theme.mixins.toolbar);
 
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+
   return (
     <Box sx={{ flexGrow: 1 }}>
       <AppBar component="nav" position="fixed">
         <Toolbar sx={{ justifyContent: "space-between" }}>
+          {isMobile && userId && (
+            <MobileMenu collections={collections} userId={userId} />
+          )}
           <Typography
             component={Link}
             href="/"
@@ -44,19 +52,21 @@ export default function Navbar({
               sx={{
                 display: "flex",
                 justifyContent: "space-between",
-                flexGrow: 1,
+                flexGrow: !isMobile ? 1 : "initial",
               }}
             >
-              <Stack direction="row">
-                <Button
-                  sx={{ color: "white" }}
-                  component={Link}
-                  href={paths.irregularVerbs.path}
-                >
-                  {paths.irregularVerbs.name}
-                </Button>
-                <UserCollections collections={collections} userId={userId} />
-              </Stack>
+              {!isMobile && (
+                <Stack direction="row">
+                  <Button
+                    sx={{ color: "inherit" }}
+                    component={Link}
+                    href={paths.irregularVerbs.path}
+                  >
+                    {paths.irregularVerbs.name}
+                  </Button>
+                  <UserCollections collections={collections} userId={userId} />
+                </Stack>
+              )}
               <SettingsMenu />
             </Box>
           )}
