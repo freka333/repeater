@@ -44,89 +44,95 @@ export const TableCollection: FC<TableCollectionProps> = ({
   header,
 }) => {
   return (
-    <Paper
-      sx={{
-        width: "100%",
-        maxWidth: "lg",
-        mx: "auto",
-      }}
-    >
-      {header}
-      {terms.length === 0 ? (
-        <Box sx={{ p: "2rem" }}>
-          <Typography>No terms</Typography>
-          {}{" "}
-        </Box>
-      ) : (
-        <TableContainer>
-          <Table stickyHeader sx={{ borderCollapse: "collapse" }}>
-            <TableHead>
-              {terms[0].type === "IrregularVerb" ? (
-                <TableRow>
-                  <TableCell>Hungarian</TableCell>
-                  <TableCell>Infinitive</TableCell>
-                  <TableCell>Past Simple (V2)</TableCell>
-                  <TableCell>Past Participle (V3)</TableCell>
-                  <ActionsColumn>Actions</ActionsColumn>
-                </TableRow>
-              ) : (
-                <TableRow>
-                  <TableCell width="50%">Hungarian</TableCell>
-                  <TableCell width="50%">English</TableCell>
-                  <ActionsColumn>Actions</ActionsColumn>
-                </TableRow>
-              )}
-            </TableHead>
-            <TableBody>
-              {terms.map((term) => {
-                const isKnown = term.manualState === "Known";
-                const isRepeatable = term.manualState === "Repeatable";
-                return (
-                  <TableRow key={term.id}>
-                    <TableCell>{term.hungarian}</TableCell>
-                    {term.type === "IrregularVerb" ? (
-                      <>
-                        <TableCell>{term.enV1}</TableCell>
-                        <TableCell>{term.enV2}</TableCell>
-                        <TableCell>{term.enV3}</TableCell>
-                      </>
-                    ) : (
-                      <TableCell>{term.english}</TableCell>
-                    )}
-                    <TableCell sx={{ display: "flex", alignItems: "center" }}>
-                      <MarkButton
-                        mark="Known"
-                        isMarked={isKnown}
-                        onClick={async () => {
-                          if (isKnown) {
-                            await handleRemoveMarkTerm(term.id, userId);
-                          } else {
-                            await handleMarkTerm(term.id, userId, "Known");
-                          }
-                        }}
-                      />
-                      <MarkButton
-                        mark="Repeatable"
-                        isMarked={isRepeatable}
-                        onClick={async () => {
-                          if (isRepeatable) {
-                            await handleRemoveMarkTerm(term.id, userId);
-                          } else {
-                            await handleMarkTerm(term.id, userId, "Repeatable");
-                          }
-                        }}
-                      />
-                      {term.type === "Term" && (
-                        <MoreOptionsButton term={term} userId={userId} />
-                      )}
-                    </TableCell>
+    <Box sx={{ p: "1rem" }}>
+      <Paper
+        sx={{
+          width: "100%",
+          maxWidth: "lg",
+          mx: "auto",
+        }}
+      >
+        {header}
+        {terms.length === 0 ? (
+          <Box sx={{ p: "2rem" }}>
+            <Typography>No terms</Typography>
+            {}{" "}
+          </Box>
+        ) : (
+          <TableContainer>
+            <Table stickyHeader sx={{ borderCollapse: "collapse" }}>
+              <TableHead>
+                {terms[0].type === "IrregularVerb" ? (
+                  <TableRow>
+                    <TableCell>Hungarian</TableCell>
+                    <TableCell>Infinitive</TableCell>
+                    <TableCell>Past Simple (V2)</TableCell>
+                    <TableCell>Past Participle (V3)</TableCell>
+                    <ActionsColumn>Actions</ActionsColumn>
                   </TableRow>
-                );
-              })}
-            </TableBody>
-          </Table>
-        </TableContainer>
-      )}
-    </Paper>
+                ) : (
+                  <TableRow>
+                    <TableCell width="50%">Hungarian</TableCell>
+                    <TableCell width="50%">English</TableCell>
+                    <ActionsColumn>Actions</ActionsColumn>
+                  </TableRow>
+                )}
+              </TableHead>
+              <TableBody>
+                {terms.map((term) => {
+                  const isKnown = term.manualState === "Known";
+                  const isRepeatable = term.manualState === "Repeatable";
+                  return (
+                    <TableRow key={term.id}>
+                      <TableCell>{term.hungarian}</TableCell>
+                      {term.type === "IrregularVerb" ? (
+                        <>
+                          <TableCell>{term.enV1}</TableCell>
+                          <TableCell>{term.enV2}</TableCell>
+                          <TableCell>{term.enV3}</TableCell>
+                        </>
+                      ) : (
+                        <TableCell>{term.english}</TableCell>
+                      )}
+                      <TableCell sx={{ display: "flex", alignItems: "center" }}>
+                        <MarkButton
+                          mark="Known"
+                          isMarked={isKnown}
+                          onClick={async () => {
+                            if (isKnown) {
+                              await handleRemoveMarkTerm(term.id, userId);
+                            } else {
+                              await handleMarkTerm(term.id, userId, "Known");
+                            }
+                          }}
+                        />
+                        <MarkButton
+                          mark="Repeatable"
+                          isMarked={isRepeatable}
+                          onClick={async () => {
+                            if (isRepeatable) {
+                              await handleRemoveMarkTerm(term.id, userId);
+                            } else {
+                              await handleMarkTerm(
+                                term.id,
+                                userId,
+                                "Repeatable"
+                              );
+                            }
+                          }}
+                        />
+                        {term.type === "Term" && (
+                          <MoreOptionsButton term={term} userId={userId} />
+                        )}
+                      </TableCell>
+                    </TableRow>
+                  );
+                })}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        )}
+      </Paper>
+    </Box>
   );
 };
