@@ -59,6 +59,7 @@ export const LearningPage: FC<LearningPageProps> = ({
   const [language, setLanguage] = useState<"hungarian" | "english">(
     "hungarian"
   );
+  const [disabledStatusButtons, setDisabledStatusButtons] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
@@ -84,7 +85,8 @@ export const LearningPage: FC<LearningPageProps> = ({
     setOrderedTerms(updatedTerms);
   };
 
-  const handleSetStatus = async (status: LearningTermStatus) => {
+  const handleCardSetStatus = async (status: LearningTermStatus) => {
+    setDisabledStatusButtons(true);
     const currentTermId = orderedTerms[currentIndex].learningTermId;
     if (currentTermId) {
       await updateLearningTermStatus(currentTermId, status);
@@ -103,6 +105,7 @@ export const LearningPage: FC<LearningPageProps> = ({
         setCurrentIndex(0);
       }
     }
+    setDisabledStatusButtons(false);
   };
 
   const handleClickGoBack = () => {
@@ -122,9 +125,10 @@ export const LearningPage: FC<LearningPageProps> = ({
             termIndex={currentIndex}
             termCount={orderedTerms.length}
             mark={orderedTerms[currentIndex].mark}
-            handleSetStatus={handleSetStatus}
+            handleSetStatus={handleCardSetStatus}
             handleChangeLanguage={handleChangeLanguage}
             handleChangeMark={handleChangeMark}
+            disabledStatusButtons={disabledStatusButtons}
           />
         </>
       ) : (

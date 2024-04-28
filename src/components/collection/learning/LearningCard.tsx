@@ -23,24 +23,29 @@ interface CustomButtonProps {
   status: "stillLearning" | "gotIt";
 }
 
-const CustomButton = styled(Button)<CustomButtonProps>(
-  ({ theme, status: buttonType }) => ({
-    flexGrow: 1,
-    py: "1rem",
-    fontSize: "1.2rem",
-    [theme.breakpoints.up("md")]: {
-      fontSize: "1rem",
-    },
-    backgroundColor: buttonType === "stillLearning" ? "#f7ecee" : "#ecf4f0",
-    border: "1px solid #c3cbcb",
-    color: buttonType === "stillLearning" ? "#5d1324" : "#15502e",
-    fontWeight: "bold",
-    padding: "1rem",
-    "&:hover": {
-      backgroundColor: buttonType === "stillLearning" ? "#eedde0" : "#dcf1e7",
-    },
-  })
-);
+const defaultCustomButtonStyle = (status: "stillLearning" | "gotIt") => ({
+  backgroundColor: status === "stillLearning" ? "#f7ecee" : "#ecf4f0",
+  color: status === "stillLearning" ? "#5d1324" : "#15502e",
+});
+
+const CustomButton = styled(Button)<CustomButtonProps>(({ theme, status }) => ({
+  flexGrow: 1,
+  py: "1rem",
+  fontSize: "1.2rem",
+  [theme.breakpoints.up("md")]: {
+    fontSize: "1rem",
+  },
+  ...defaultCustomButtonStyle(status),
+  border: "1px solid #c3cbcb",
+  fontWeight: "bold",
+  padding: "1rem",
+  "&:hover": {
+    backgroundColor: status === "stillLearning" ? "#eedde0" : "#dcf1e7",
+  },
+  "&:disabled": {
+    ...defaultCustomButtonStyle(status),
+  },
+}));
 
 interface LearningCardProps {
   term: string;
@@ -50,6 +55,7 @@ interface LearningCardProps {
   handleSetStatus: (status: LearningTermStatus) => Promise<void>;
   handleChangeLanguage: VoidFunction;
   handleChangeMark: (mark: TermMark | null) => void;
+  disabledStatusButtons: boolean;
 }
 
 export const LearningCard: FC<LearningCardProps> = ({
@@ -60,6 +66,7 @@ export const LearningCard: FC<LearningCardProps> = ({
   handleChangeLanguage,
   mark,
   handleChangeMark,
+  disabledStatusButtons,
 }) => {
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
 
@@ -107,6 +114,8 @@ export const LearningCard: FC<LearningCardProps> = ({
       <CardActions>
         <CustomButton
           status="stillLearning"
+          disabled={disabledStatusButtons}
+          disableRipple
           onClick={() => {
             handleSetStatus("StillLearning");
           }}
@@ -115,6 +124,8 @@ export const LearningCard: FC<LearningCardProps> = ({
         </CustomButton>
         <CustomButton
           status="gotIt"
+          disabled={disabledStatusButtons}
+          disableRipple
           onClick={() => {
             handleSetStatus("GotIt");
           }}
