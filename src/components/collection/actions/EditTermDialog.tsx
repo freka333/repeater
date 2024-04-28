@@ -22,8 +22,10 @@ export const EditTermDialog: FC<EditTermDialogProps> = ({
   termId,
   userId,
 }) => {
-  const [hungarian, setHungarian] = useState(defaultHungarian);
-  const [english, setEnglish] = useState(defaultEnglish);
+  const [termInfo, setTermInfo] = useState({
+    hungarian: defaultHungarian,
+    english: defaultEnglish,
+  });
   const [isLoading, setIsLoading] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
@@ -32,7 +34,12 @@ export const EditTermDialog: FC<EditTermDialogProps> = ({
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setIsLoading(true);
-    const result = await updateTerm(userId, termId, hungarian, english);
+    const result = await updateTerm(
+      userId,
+      termId,
+      termInfo.hungarian,
+      termInfo.english
+    );
     const message = result.success
       ? "The term has been successfully modified."
       : "Oops! Something went wrong. Please try again later.";
@@ -57,15 +64,13 @@ export const EditTermDialog: FC<EditTermDialogProps> = ({
       }}
     >
       <UserTermDialogInner
-        hungarian={hungarian}
-        english={english}
-        setHungarian={setHungarian}
-        setEnglish={setEnglish}
         title="Edit term"
         handleClose={handleClose}
         inputRef={inputRef}
         saveButtonText="Save changes"
         isLoading={isLoading}
+        termInfo={termInfo}
+        setTermInfo={setTermInfo}
       />
     </Dialog>
   );

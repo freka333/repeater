@@ -9,27 +9,31 @@ import {
 import { Dispatch, FC, RefObject, SetStateAction, useEffect } from "react";
 
 interface UserTermDialogInnerProps {
-  hungarian: string;
-  english: string;
-  setHungarian: Dispatch<SetStateAction<string>>;
-  setEnglish: Dispatch<SetStateAction<string>>;
   handleClose: VoidFunction;
   inputRef: RefObject<HTMLInputElement>;
   title: string;
   saveButtonText: string;
   isLoading: boolean;
+  termInfo: {
+    hungarian: string;
+    english: string;
+  };
+  setTermInfo: Dispatch<
+    SetStateAction<{
+      hungarian: string;
+      english: string;
+    }>
+  >;
 }
 
 export const UserTermDialogInner: FC<UserTermDialogInnerProps> = ({
-  hungarian,
-  english,
-  setHungarian,
-  setEnglish,
   handleClose,
   inputRef,
   title,
   saveButtonText,
   isLoading,
+  termInfo,
+  setTermInfo,
 }) => {
   useEffect(() => {
     inputRef.current?.focus();
@@ -41,9 +45,9 @@ export const UserTermDialogInner: FC<UserTermDialogInnerProps> = ({
         <DialogContentText>Hungarian</DialogContentText>
         <TextField
           fullWidth
-          value={hungarian}
+          value={termInfo.hungarian}
           onChange={(e) => {
-            setHungarian(e.target.value);
+            setTermInfo({ ...termInfo, hungarian: e.target.value });
           }}
           required
           type="text"
@@ -53,9 +57,9 @@ export const UserTermDialogInner: FC<UserTermDialogInnerProps> = ({
         <DialogContentText sx={{ mt: 2 }}>English</DialogContentText>
         <TextField
           fullWidth
-          value={english}
+          value={termInfo.english}
           onChange={(e) => {
-            setEnglish(e.target.value);
+            setTermInfo({ ...termInfo, english: e.target.value });
           }}
           required
           type="text"

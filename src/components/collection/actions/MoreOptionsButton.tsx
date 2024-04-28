@@ -170,6 +170,7 @@ const OptionsMenu: FC<OptionsMenuProps> = ({
         </MenuItem>
       </Menu>
       <EditTermDialog
+        key={term.id}
         open={openEditDialog}
         handleClose={handleCloseEditDialog}
         defaultHungarian={term.hungarian}
