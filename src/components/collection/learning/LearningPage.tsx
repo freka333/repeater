@@ -106,6 +106,7 @@ export const LearningPage: FC<LearningPageProps> = ({
           setCurrentIndex(0);
         }
       }
+      setLanguage("hungarian");
       setIsStatusButtonsDisabled(false);
     }
   };
