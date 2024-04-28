@@ -11,6 +11,7 @@ export const PagePaper = ({ children }: { children: ReactNode }) => {
         mx: "auto",
         my: 4,
         display: "flex",
+        justifyContent: "center",
       }}
     >
       {children}

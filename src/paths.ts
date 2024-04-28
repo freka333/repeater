@@ -11,4 +11,7 @@ export const paths = {
   collection: {
     path: (id: string) => `/collections/${id}`,
   },
+  learningCollection: {
+    path: (id: string) => `/collections/${id}/learn`,
+  },
 };

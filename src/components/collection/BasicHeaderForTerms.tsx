@@ -1,6 +1,7 @@
-import { Box, Typography, useMediaQuery } from "@mui/material";
+import { Box, Button, Stack, Typography, useMediaQuery } from "@mui/material";
 import { FC, ReactNode } from "react";
 import theme from "@/theme";
+import Link from "next/link";
 
 export type displayedItems = {
   Unmarked: boolean;
@@ -11,11 +12,13 @@ export type displayedItems = {
 interface BasicTermsHeaderProps {
   title: string;
   filter: ReactNode;
+  learningPath?: string;
 }
 
 export const BasicHeaderForTerms: FC<BasicTermsHeaderProps> = ({
   title,
   filter,
+  learningPath,
 }) => {
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
@@ -31,9 +34,16 @@ export const BasicHeaderForTerms: FC<BasicTermsHeaderProps> = ({
         gap: 2,
       }}
     >
-      <Typography variant="h6" textAlign={isMobile ? "center" : "left"}>
-        {title}
-      </Typography>
+      <Stack flexDirection="row" gap={2}>
+        <Typography variant="h6" textAlign={isMobile ? "center" : "left"}>
+          {title}
+        </Typography>
+        {learningPath && (
+          <Button variant="contained" LinkComponent={Link} href={learningPath}>
+            Learn
+          </Button>
+        )}
+      </Stack>
       {filter}
     </Box>
   );

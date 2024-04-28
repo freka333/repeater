@@ -19,9 +19,13 @@ const theme = createTheme({
     },
     knownTerm: {
       main: "#33a314",
+      light: "#daf3d4",
+      greyish: "#c7e3c0",
     },
     repeatableTerm: {
       main: "#eb3434",
+      light: "#fed6d6",
+      greyish: "#edcaca",
     },
     greyColor: {
       main: "#b6b6b6",

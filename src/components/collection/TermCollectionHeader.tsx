@@ -1,6 +1,9 @@
 import {
-  Box,
   Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
   IconButton,
   ListItemIcon,
   ListItemText,
@@ -9,7 +12,7 @@ import {
   Stack,
   Typography,
 } from "@mui/material";
-import { FC, ReactNode, useState } from "react";
+import { FC, ReactNode, useEffect, useState } from "react";
 import { AddNewTermDialog } from "./actions/AddNewTermDialog";
 import { AddCircle, Delete, Edit, MoreHoriz } from "@mui/icons-material";
 import { deleteCollection } from "@/app/actions";
@@ -17,6 +20,15 @@ import { DeleteDialog } from "./actions/DeleteDialog";
 import { RenameCollectionDialog } from "./actions/RenameCollectionDialog";
 import { useSnackbar } from "notistack";
 import { useRouter } from "next/navigation";
+import LocalLibraryIcon from "@mui/icons-material/LocalLibrary";
+import { StartLearningDialog } from "./learning/StartLearningDialog";
+import {
+  completionOfLearning,
+  createLearningCollection,
+  getLearningInProgress,
+} from "@/app/requests/learningRequests";
+import { paths } from "@/paths";
+import { TermWithUserInfo } from "@/types/collectionTypes";
 
 export type displayedItems = {
   Unmarked: boolean;
@@ -24,11 +36,18 @@ export type displayedItems = {
   Repeatable: boolean;
 };
 
+export interface filterKeys extends displayedItems {
+  Shuffle: boolean;
+}
+
 interface TermCollectionHeaderProps {
   title: string;
   userId: string;
   filter: ReactNode;
   collectionId: string;
+  learningPath: string;
+  hasTerm: boolean;
+  terms: TermWithUserInfo[];
 }
 
 export const TermCollectionHeader: FC<TermCollectionHeaderProps> = ({
@@ -36,9 +55,35 @@ export const TermCollectionHeader: FC<TermCollectionHeaderProps> = ({
   userId,
   filter,
   collectionId,
+  learningPath,
+  hasTerm,
+  terms,
 }) => {
   const [openAddTerminalDialog, setOpenAddTerminalDialog] = useState(false);
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
+  const [openStartLearningDialog, isOpenStartLearningDialog] = useState(false);
+  const [openEmptyLearningDialog, setOpenEmptyLearningDialog] = useState(false);
+  const [checkedItems, setCheckedItems] = useState<filterKeys>({
+    Unmarked: true,
+    Known: true,
+    Repeatable: true,
+    Shuffle: true,
+  });
+  const router = useRouter();
+  const [startLearnButtonDisabled, setStartLearnButtonDisabled] = useState({
+    noTerm: false,
+    saving: false,
+  });
+
+  useEffect(() => {
+    setCheckedItems({
+      Unmarked: true,
+      Known: true,
+      Repeatable: true,
+      Shuffle: true,
+    });
+    setStartLearnButtonDisabled({ noTerm: false, saving: false });
+  }, [terms]);
 
   const handleCloseAddDialog = () => {
     setOpenAddTerminalDialog(false);
@@ -48,16 +93,76 @@ export const TermCollectionHeader: FC<TermCollectionHeaderProps> = ({
     setAnchorEl(null);
   };
 
+  const handleLearningClick = async () => {
+    if (hasTerm) {
+      const result = await getLearningInProgress(collectionId, userId);
+      if (!result.learningCollection) {
+        isOpenStartLearningDialog(true);
+      } else if (result.learningTerms?.length === 0) {
+        await completionOfLearning(result.learningCollection.id, userId);
+        isOpenStartLearningDialog(true);
+      } else {
+        router.push(learningPath);
+      }
+    } else {
+      setOpenEmptyLearningDialog(true);
+    }
+  };
+
+  const handleStartLearning = async (
+    event: React.FormEvent<HTMLFormElement>
+  ) => {
+    event.preventDefault();
+    setStartLearnButtonDisabled({ ...startLearnButtonDisabled, saving: true });
+    await createLearningCollection({
+      collectionId,
+      userId,
+      filter: checkedItems,
+    });
+    router.push(paths.learningCollection.path(collectionId));
+  };
+
+  const handleCloseLearningDialog = () => {
+    isOpenStartLearningDialog(false);
+  };
+
+  const handleChangeCheck = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const items = {
+      ...checkedItems,
+      [event.target.name]: event.target.checked,
+    };
+    const filteredKeys = Object.keys(items).filter(
+      (key) => items[key as keyof filterKeys]
+    );
+    const filteredTerms = terms.filter((item) =>
+      filteredKeys.includes(item.manualState)
+    );
+    if (
+      filteredTerms.length === 0 ||
+      (!items.Known && !items.Repeatable && !items.Unmarked)
+    ) {
+      setStartLearnButtonDisabled({
+        ...startLearnButtonDisabled,
+        noTerm: true,
+      });
+    } else {
+      setStartLearnButtonDisabled({
+        ...startLearnButtonDisabled,
+        noTerm: false,
+      });
+    }
+    setCheckedItems(items);
+  };
+
   return (
-    <Box
+    <Stack
+      direction={{ xs: "column", md: "row" }}
+      justifyContent="space-between"
+      alignItems="center"
+      gap={2}
+      p={2}
       sx={{
         bgcolor: "white",
-        display: "flex",
-        flexDirection: { xs: "column", sm: "row" },
-        justifyContent: "space-between",
-        alignItems: "center",
-        p: 2,
-        gap: 2,
       }}
     >
       <Stack direction={{ xs: "column", md: "row" }} gap={2}>
@@ -80,15 +185,53 @@ export const TermCollectionHeader: FC<TermCollectionHeaderProps> = ({
             userId={userId}
           />
         </Stack>
-        <Button
-          variant="outlined"
-          onClick={() => {
-            setOpenAddTerminalDialog(true);
-          }}
-          startIcon={<AddCircle />}
-        >
-          Add new term
-        </Button>
+        <Stack direction="row" gap={2}>
+          <Button
+            variant="contained"
+            onClick={handleLearningClick}
+            startIcon={<LocalLibraryIcon />}
+          >
+            Learn
+          </Button>
+          <StartLearningDialog
+            open={openStartLearningDialog}
+            handleClose={handleCloseLearningDialog}
+            checkedItems={checkedItems}
+            handleChangeCheck={handleChangeCheck}
+            handleStartLearning={handleStartLearning}
+            startLearnButtonDisabled={startLearnButtonDisabled}
+          />
+          <Dialog
+            open={openEmptyLearningDialog}
+            onClose={() => {
+              setOpenEmptyLearningDialog(false);
+            }}
+          >
+            <DialogTitle>No term yet in this collection.</DialogTitle>
+            <DialogContent>
+              <Typography>Create terms before learning!</Typography>
+            </DialogContent>
+            <DialogActions>
+              <Button
+                variant="contained"
+                onClick={() => {
+                  setOpenEmptyLearningDialog(false);
+                }}
+              >
+                Ok
+              </Button>
+            </DialogActions>
+          </Dialog>
+          <Button
+            variant="outlined"
+            onClick={() => {
+              setOpenAddTerminalDialog(true);
+            }}
+            startIcon={<AddCircle />}
+          >
+            Add new term
+          </Button>
+        </Stack>
       </Stack>
       {filter}
       <AddNewTermDialog
@@ -97,7 +240,7 @@ export const TermCollectionHeader: FC<TermCollectionHeaderProps> = ({
         userId={userId}
         collectionId={collectionId}
       />
-    </Box>
+    </Stack>
   );
 };
 

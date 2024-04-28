@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { prisma } from "./prismaClient";
 import { TermMark } from "@prisma/client";
+import { deleteAllLearningFromCollection } from "./requests/learningRequests";
 
 export async function createCollection(name: string, userId: string) {
   try {
@@ -34,6 +35,7 @@ export async function renameCollection(
 
 export async function deleteCollection(collectionId: string, userId: string) {
   try {
+    await deleteAllLearningFromCollection(collectionId, userId);
     await prisma.userTerms.deleteMany({
       where: { collectionId: collectionId, ownerId: userId },
     });
@@ -87,6 +89,7 @@ export async function updateTerm(
 
 export async function deleteTerm(userId: string, termId: string) {
   try {
+    await prisma.learningTerm.deleteMany({ where: { termId: termId } });
     await prisma.userTerms.delete({ where: { ownerId: userId, id: termId } });
     return { success: true };
   } catch (error) {

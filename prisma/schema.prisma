@@ -45,6 +45,7 @@ model User {
   userIrregularVerbs UserIrregularVerbs[]
   termCollection     TermCollection[]
   userTerms          UserTerms[]
+  learningCollection LearningCollection[]
 }
 
 model IrregularVerbs {
@@ -84,9 +85,10 @@ model TermCollection {
   id   String @id @default(auto()) @map("_id") @db.ObjectId
   name String
 
-  owner     User        @relation(fields: [ownerId], references: [id])
-  ownerId   String      @db.ObjectId
-  userTerms UserTerms[]
+  owner              User                 @relation(fields: [ownerId], references: [id])
+  ownerId            String               @db.ObjectId
+  userTerms          UserTerms[]
+  learningCollection LearningCollection[]
 }
 
 model UserTerms {
@@ -99,4 +101,32 @@ model UserTerms {
   ownerId        String         @db.ObjectId
   termCollection TermCollection @relation(fields: [collectionId], references: [id])
   collectionId   String         @db.ObjectId
+  learningTerm   LearningTerm[]
+}
+
+enum LearningTermStatus {
+  StillLearning
+  GotIt
+}
+
+model LearningTerm {
+  id     String              @id @default(auto()) @map("_id") @db.ObjectId
+  status LearningTermStatus?
+  order  Int
+
+  term                 UserTerms          @relation(fields: [termId], references: [id])
+  termId               String             @db.ObjectId
+  learningCollection   LearningCollection @relation(fields: [learningCollectionId], references: [id])
+  learningCollectionId String             @db.ObjectId
+}
+
+model LearningCollection {
+  id         String  @id @default(auto()) @map("_id") @db.ObjectId
+  inProgress Boolean @default(true)
+
+  owner          User           @relation(fields: [ownerId], references: [id])
+  ownerId        String         @db.ObjectId
+  termCollection TermCollection @relation(fields: [collectionId], references: [id])
+  collectionId   String         @db.ObjectId
+  terms          LearningTerm[]
 }

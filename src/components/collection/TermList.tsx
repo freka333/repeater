@@ -13,6 +13,7 @@ import {
   handleMarkTerm,
   handleRemoveMarkTerm,
 } from "@/app/collections/handleMark";
+import { paths } from "@/paths";
 
 interface TermListProps {
   title: string;
@@ -27,7 +28,7 @@ export const TermList: FC<TermListProps> = ({
   terms,
   collectionId,
 }) => {
-  const [checkedItems, setCheckedItems] = useState({
+  const [checkedFilterItems, setCheckedFilterItems] = useState({
     Unmarked: true,
     Known: true,
     Repeatable: true,
@@ -37,7 +38,7 @@ export const TermList: FC<TermListProps> = ({
 
   const filteredTerms = terms.filter(
     (item) =>
-      checkedItems[item.manualState] &&
+      checkedFilterItems[item.manualState] &&
       [item.hungarian, item.english].some((value) =>
         value.toLocaleLowerCase().includes(searchValue.toLocaleLowerCase())
       )
@@ -45,9 +46,9 @@ export const TermList: FC<TermListProps> = ({
 
   const filter = (
     <TermFilter
-      checkedItems={checkedItems}
+      checkedItems={checkedFilterItems}
       searchValue={searchValue}
-      setCheckedItems={setCheckedItems}
+      setCheckedItems={setCheckedFilterItems}
       setSearchValue={setSearchValue}
       isMobile={isMobile}
     />
@@ -59,6 +60,9 @@ export const TermList: FC<TermListProps> = ({
       userId={userId}
       filter={filter}
       collectionId={collectionId}
+      learningPath={paths.learningCollection.path(collectionId)}
+      hasTerm={!!terms.length}
+      terms={terms}
     />
   ) : (
     <BasicHeaderForTerms title={title} filter={filter} />
