@@ -59,7 +59,7 @@ export const LearningPage: FC<LearningPageProps> = ({
   const [language, setLanguage] = useState<"hungarian" | "english">(
     "hungarian"
   );
-  const [disabledStatusButtons, setDisabledStatusButtons] = useState(false);
+  const [isStatusButtonsDisabled, setIsStatusButtonsDisabled] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
@@ -86,26 +86,28 @@ export const LearningPage: FC<LearningPageProps> = ({
   };
 
   const handleCardSetStatus = async (status: LearningTermStatus) => {
-    setDisabledStatusButtons(true);
-    const currentTermId = orderedTerms[currentIndex].learningTermId;
-    if (currentTermId) {
-      await updateLearningTermStatus(currentTermId, status);
-    }
-    if (status === "StillLearning") {
-      const nextIndex = currentIndex + 1;
-      setCurrentIndex(nextIndex < orderedTerms.length ? nextIndex : 0);
-    } else if (orderedTerms.length === 1) {
-      await completionOfLearning(learningCollectionId, userId);
-      setOrderedTerms([]);
-    } else {
-      setOrderedTerms(
-        orderedTerms.filter((term, index) => index !== currentIndex)
-      );
-      if (currentIndex === orderedTerms.length - 1) {
-        setCurrentIndex(0);
+    if (!isStatusButtonsDisabled) {
+      setIsStatusButtonsDisabled(true);
+      const currentTermId = orderedTerms[currentIndex].learningTermId;
+      if (currentTermId) {
+        await updateLearningTermStatus(currentTermId, status);
       }
+      if (status === "StillLearning") {
+        const nextIndex = currentIndex + 1;
+        setCurrentIndex(nextIndex < orderedTerms.length ? nextIndex : 0);
+      } else if (orderedTerms.length === 1) {
+        await completionOfLearning(learningCollectionId, userId);
+        setOrderedTerms([]);
+      } else {
+        setOrderedTerms(
+          orderedTerms.filter((term, index) => index !== currentIndex)
+        );
+        if (currentIndex === orderedTerms.length - 1) {
+          setCurrentIndex(0);
+        }
+      }
+      setIsStatusButtonsDisabled(false);
     }
-    setDisabledStatusButtons(false);
   };
 
   const handleClickGoBack = () => {
@@ -128,7 +130,6 @@ export const LearningPage: FC<LearningPageProps> = ({
             handleSetStatus={handleCardSetStatus}
             handleChangeLanguage={handleChangeLanguage}
             handleChangeMark={handleChangeMark}
-            disabledStatusButtons={disabledStatusButtons}
           />
         </>
       ) : (

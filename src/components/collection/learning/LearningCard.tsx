@@ -23,11 +23,6 @@ interface CustomButtonProps {
   status: "stillLearning" | "gotIt";
 }
 
-const defaultCustomButtonStyle = (status: "stillLearning" | "gotIt") => ({
-  backgroundColor: status === "stillLearning" ? "#f7ecee" : "#ecf4f0",
-  color: status === "stillLearning" ? "#5d1324" : "#15502e",
-});
-
 const CustomButton = styled(Button)<CustomButtonProps>(({ theme, status }) => ({
   flexGrow: 1,
   py: "1rem",
@@ -35,15 +30,13 @@ const CustomButton = styled(Button)<CustomButtonProps>(({ theme, status }) => ({
   [theme.breakpoints.up("md")]: {
     fontSize: "1rem",
   },
-  ...defaultCustomButtonStyle(status),
+  backgroundColor: status === "stillLearning" ? "#f7ecee" : "#ecf4f0",
+  color: status === "stillLearning" ? "#5d1324" : "#15502e",
   border: "1px solid #c3cbcb",
   fontWeight: "bold",
   padding: "1rem",
   "&:hover": {
     backgroundColor: status === "stillLearning" ? "#eedde0" : "#dcf1e7",
-  },
-  "&:disabled": {
-    ...defaultCustomButtonStyle(status),
   },
 }));
 
@@ -55,7 +48,6 @@ interface LearningCardProps {
   handleSetStatus: (status: LearningTermStatus) => Promise<void>;
   handleChangeLanguage: VoidFunction;
   handleChangeMark: (mark: TermMark | null) => void;
-  disabledStatusButtons: boolean;
 }
 
 export const LearningCard: FC<LearningCardProps> = ({
@@ -66,7 +58,6 @@ export const LearningCard: FC<LearningCardProps> = ({
   handleChangeLanguage,
   mark,
   handleChangeMark,
-  disabledStatusButtons,
 }) => {
   const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
 
@@ -114,8 +105,6 @@ export const LearningCard: FC<LearningCardProps> = ({
       <CardActions>
         <CustomButton
           status="stillLearning"
-          disabled={disabledStatusButtons}
-          disableRipple
           onClick={() => {
             handleSetStatus("StillLearning");
           }}
@@ -124,8 +113,6 @@ export const LearningCard: FC<LearningCardProps> = ({
         </CustomButton>
         <CustomButton
           status="gotIt"
-          disabled={disabledStatusButtons}
-          disableRipple
           onClick={() => {
             handleSetStatus("GotIt");
           }}
