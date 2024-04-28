@@ -17,8 +17,10 @@ export const AddNewTermDialog: FC<AddNewTermDialogProps> = ({
   userId,
   collectionId,
 }) => {
-  const [hungarian, setHungarian] = useState("");
-  const [english, setEnglish] = useState("");
+  const [termInfo, setTermInfo] = useState({
+    hungarian: "",
+    english: "",
+  });
   const [isLoading, setIsLoading] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
@@ -29,20 +31,19 @@ export const AddNewTermDialog: FC<AddNewTermDialogProps> = ({
     setIsLoading(true);
     const result = await addTermToCollection(
       userId,
-      hungarian,
-      english,
+      termInfo.hungarian,
+      termInfo.english,
       collectionId
     );
     const message = result.success
-      ? `The term ${hungarian} - ${english} has been successfully created.`
+      ? `The term ${termInfo.hungarian} - ${termInfo.english} has been successfully created.`
       : "Oops! Something went wrong. Please try again later.";
     enqueueSnackbar(message, {
       autoHideDuration: 3000,
       variant: result.success ? "success" : "error",
     });
     router.refresh();
-    setHungarian("");
-    setEnglish("");
+    setTermInfo({ hungarian: "", english: "" });
     setIsLoading(false);
     inputRef.current?.focus();
   };
@@ -59,15 +60,13 @@ export const AddNewTermDialog: FC<AddNewTermDialogProps> = ({
       }}
     >
       <UserTermDialogInner
-        hungarian={hungarian}
-        english={english}
-        setHungarian={setHungarian}
-        setEnglish={setEnglish}
         handleClose={handleClose}
         inputRef={inputRef}
         title="Add new term"
         saveButtonText="Save and add next"
         isLoading={isLoading}
+        termInfo={termInfo}
+        setTermInfo={setTermInfo}
       />
     </Dialog>
   );
