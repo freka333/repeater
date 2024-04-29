@@ -120,9 +120,15 @@ model LearningTerm {
   learningCollectionId String             @db.ObjectId
 }
 
+enum Languages {
+  hungarian
+  english
+}
+
 model LearningCollection {
-  id         String  @id @default(auto()) @map("_id") @db.ObjectId
-  inProgress Boolean @default(true)
+  id             String    @id @default(auto()) @map("_id") @db.ObjectId
+  inProgress     Boolean   @default(true)
+  sourceLanguage Languages
 
   owner          User           @relation(fields: [ownerId], references: [id])
   ownerId        String         @db.ObjectId

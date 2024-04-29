@@ -10,6 +10,10 @@ import {
   FormControlLabel,
   FormGroup,
   FormLabel,
+  InputLabel,
+  MenuItem,
+  Select,
+  SelectChangeEvent,
   Stack,
   Switch,
   Typography,
@@ -18,6 +22,7 @@ import { FC } from "react";
 import SpellcheckIcon from "@mui/icons-material/Spellcheck";
 import WhatshotIcon from "@mui/icons-material/Whatshot";
 import QuestionMarkIcon from "@mui/icons-material/QuestionMark";
+import { Languages } from "@prisma/client";
 
 interface StartLearningDialogProps {
   open: boolean;
@@ -34,6 +39,8 @@ interface StartLearningDialogProps {
     noTerm: boolean;
     saving: boolean;
   };
+  sourceLanguage: Languages;
+  handleChangeSourceLanguage: (event: SelectChangeEvent<Languages>) => void;
 }
 
 export const StartLearningDialog: FC<StartLearningDialogProps> = ({
@@ -43,6 +50,8 @@ export const StartLearningDialog: FC<StartLearningDialogProps> = ({
   handleChangeCheck,
   handleClose,
   startLearnButtonDisabled,
+  sourceLanguage,
+  handleChangeSourceLanguage,
 }) => {
   return (
     <Dialog
@@ -140,6 +149,20 @@ export const StartLearningDialog: FC<StartLearningDialogProps> = ({
               labelPlacement="start"
               sx={{ justifyContent: "space-between" }}
             />
+            <FormControl sx={{ m: 1, minWidth: 120 }}>
+              <InputLabel>Source language</InputLabel>
+              <Select
+                value={sourceLanguage}
+                onChange={(event) => {
+                  handleChangeSourceLanguage(event);
+                }}
+                label="Source language"
+                displayEmpty
+              >
+                <MenuItem value="hungarian">Hungarian</MenuItem>
+                <MenuItem value="english">English</MenuItem>
+              </Select>
+            </FormControl>
           </FormGroup>
         </FormControl>
         <Box sx={(theme) => ({ height: theme.typography.subtitle1.fontSize })}>

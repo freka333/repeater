@@ -10,7 +10,7 @@ import {
   Typography,
 } from "@mui/material";
 import { LearningCard } from "./LearningCard";
-import { LearningTermStatus, TermMark } from "@prisma/client";
+import { Languages, LearningTermStatus, TermMark } from "@prisma/client";
 import {
   completionOfLearning,
   updateLearningTermStatus,
@@ -41,6 +41,7 @@ interface LearningPageProps {
   learningCollectionId: string;
   userId: string;
   collectionName: string | null;
+  sourceLanguage: Languages;
 }
 
 export const LearningPage: FC<LearningPageProps> = ({
@@ -49,6 +50,7 @@ export const LearningPage: FC<LearningPageProps> = ({
   learningCollectionId,
   userId,
   collectionName,
+  sourceLanguage,
 }) => {
   const [orderedTerms, setOrderedTerms] = useState(
     terms
@@ -56,9 +58,7 @@ export const LearningPage: FC<LearningPageProps> = ({
       .sort((a, b) => a.order - b.order)
   );
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [language, setLanguage] = useState<"hungarian" | "english">(
-    "hungarian"
-  );
+  const [language, setLanguage] = useState<Languages>(sourceLanguage);
   const [isStatusButtonsDisabled, setIsStatusButtonsDisabled] = useState(false);
   const router = useRouter();
 
@@ -106,7 +106,7 @@ export const LearningPage: FC<LearningPageProps> = ({
           setCurrentIndex(0);
         }
       }
-      setLanguage("hungarian");
+      setLanguage(sourceLanguage);
       setIsStatusButtonsDisabled(false);
     }
   };

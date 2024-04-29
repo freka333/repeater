@@ -9,6 +9,7 @@ import {
   ListItemText,
   Menu,
   MenuItem,
+  SelectChangeEvent,
   Stack,
   Typography,
 } from "@mui/material";
@@ -29,6 +30,7 @@ import {
 } from "@/app/requests/learningRequests";
 import { paths } from "@/paths";
 import { TermWithUserInfo } from "@/types/collectionTypes";
+import { Languages } from "@prisma/client";
 
 export type displayedItems = {
   Unmarked: boolean;
@@ -69,6 +71,7 @@ export const TermCollectionHeader: FC<TermCollectionHeaderProps> = ({
     Repeatable: true,
     Shuffle: true,
   });
+  const [sourceLanguage, setSourceLanguage] = useState<Languages>("hungarian");
   const router = useRouter();
   const [startLearnButtonDisabled, setStartLearnButtonDisabled] = useState({
     noTerm: false,
@@ -118,6 +121,7 @@ export const TermCollectionHeader: FC<TermCollectionHeaderProps> = ({
       collectionId,
       userId,
       filter: checkedItems,
+      sourceLanguage,
     });
     router.push(paths.learningCollection.path(collectionId));
   };
@@ -152,6 +156,10 @@ export const TermCollectionHeader: FC<TermCollectionHeaderProps> = ({
       });
     }
     setCheckedItems(items);
+  };
+
+  const handleChangeSourceLanguage = (event: SelectChangeEvent<Languages>) => {
+    setSourceLanguage(event.target.value as Languages);
   };
 
   return (
@@ -200,6 +208,8 @@ export const TermCollectionHeader: FC<TermCollectionHeaderProps> = ({
             handleChangeCheck={handleChangeCheck}
             handleStartLearning={handleStartLearning}
             startLearnButtonDisabled={startLearnButtonDisabled}
+            sourceLanguage={sourceLanguage}
+            handleChangeSourceLanguage={handleChangeSourceLanguage}
           />
           <Dialog
             open={openEmptyLearningDialog}

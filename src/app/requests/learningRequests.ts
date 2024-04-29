@@ -4,13 +4,14 @@ import { prisma } from "@/app/prismaClient";
 import { filterKeys } from "@/components/collection/TermCollectionHeader";
 import { getMarkForLearning } from "@/functions";
 import { paths } from "@/paths";
-import { LearningTermStatus } from "@prisma/client";
+import { Languages, LearningTermStatus } from "@prisma/client";
 import { revalidatePath } from "next/cache";
 
 interface CollectionLearningParams {
   collectionId: string;
   userId: string;
   filter: filterKeys;
+  sourceLanguage: Languages;
 }
 
 export async function getLearningTerms(collectionId: string) {
@@ -60,6 +61,7 @@ export async function createLearningCollection({
   collectionId,
   userId,
   filter,
+  sourceLanguage,
 }: CollectionLearningParams) {
   try {
     const mark = getMarkForLearning({
@@ -86,6 +88,7 @@ export async function createLearningCollection({
         collectionId: collectionId,
         ownerId: userId,
         terms: { createMany: { data: termsLearning } },
+        sourceLanguage: sourceLanguage,
       },
     });
     revalidatePath(paths.learningCollection.path(collectionId));

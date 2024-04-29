@@ -49,6 +49,7 @@ export default async function CollectionLearn({
             collectionId={params.id}
             userId={session.user.id}
             learningCollectionId={result.learningCollection.id}
+            sourceLanguage={result.learningCollection.sourceLanguage}
           />
         );
       }
