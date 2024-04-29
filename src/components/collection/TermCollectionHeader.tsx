@@ -15,7 +15,7 @@ import {
 import { FC, ReactNode, useEffect, useState } from "react";
 import { AddNewTermDialog } from "./actions/AddNewTermDialog";
 import { AddCircle, Delete, Edit, MoreHoriz } from "@mui/icons-material";
-import { deleteCollection } from "@/app/actions";
+import { deleteCollection } from "@/app/requests/collectionRequests";
 import { DeleteDialog } from "./actions/DeleteDialog";
 import { RenameCollectionDialog } from "./actions/RenameCollectionDialog";
 import { useSnackbar } from "notistack";

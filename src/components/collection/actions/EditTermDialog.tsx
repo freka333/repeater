@@ -1,6 +1,6 @@
 import { Dialog } from "@mui/material";
 import { FC, FormEvent, useRef, useState } from "react";
-import { updateTerm } from "@/app/actions";
+import { updateTerm } from "@/app/requests/termRequests";
 import { UserTermDialogInner } from "./UserTermDialogInner";
 import { useRouter } from "next/navigation";
 import { useSnackbar } from "notistack";

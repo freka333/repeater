@@ -9,7 +9,10 @@ import { MobileCollection } from "./MobileCollection";
 import { TableCollection } from "./TableCollection";
 import { TermFilter } from "./TermFilter";
 import { BasicHeaderForTerms } from "./BasicHeaderForTerms";
-import { handleMarkVerb, handleRemoveMarkVerb } from "@/app/actions";
+import {
+  handleMarkVerb,
+  handleRemoveMarkVerb,
+} from "@/app/requests/termRequests";
 
 interface IrregularVerbListProps {
   verbs: IrregularVerbWithUserInfo[];

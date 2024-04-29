@@ -1,4 +1,4 @@
-import { renameCollection } from "@/app/actions";
+import { renameCollection } from "@/app/requests/collectionRequests";
 import {
   Button,
   Dialog,

@@ -1,4 +1,4 @@
-import { addTermToCollection } from "@/app/actions";
+import { addTermToCollection } from "@/app/requests/termRequests";
 import { Dialog } from "@mui/material";
 import { FC, FormEvent, useRef, useState } from "react";
 import { UserTermDialogInner } from "./UserTermDialogInner";

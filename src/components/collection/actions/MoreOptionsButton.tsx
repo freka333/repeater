@@ -1,4 +1,4 @@
-import { deleteTerm } from "@/app/actions";
+import { deleteTerm } from "@/app/requests/termRequests";
 import theme from "@/theme";
 import { TermWithUserInfo } from "@/types/collectionTypes";
 import { Delete, Edit, MoreHoriz, MoreVert } from "@mui/icons-material";

@@ -1,4 +1,4 @@
-import { createCollection } from "@/app/actions";
+import { createCollection } from "@/app/requests/collectionRequests";
 import { paths } from "@/paths";
 import {
   Button,
